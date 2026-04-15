@@ -25,30 +25,6 @@ const intentEyebrows: Record<Intent, string> = {
   invest: "Brisbane investment brief",
 };
 
-const intentHighlights: Record<
-  Intent,
-  {
-    label: string;
-    value: string;
-  }[]
-> = {
-  rent: [
-    { label: "Workflow", value: "Filter by region and weekly budget in seconds." },
-    { label: "Readout", value: "See affordability, fit, and amenity in one pass." },
-    { label: "Compare", value: "Pin up to three suburbs side by side for clearer trade-offs." },
-  ],
-  buy: [
-    { label: "Workflow", value: "Narrow by region and purchase budget without losing context." },
-    { label: "Readout", value: "Balance purchase value, lifestyle, and family practicality." },
-    { label: "Signals", value: "School, transport, shopping, and park access stay visible." },
-  ],
-  invest: [
-    { label: "Workflow", value: "Screen suburbs by entry point and intent-specific demand." },
-    { label: "Readout", value: "Keep yield, acquisition discipline, and growth pressure in view." },
-    { label: "Trust", value: "Recommendation logic stays readable enough to audit quickly." },
-  ],
-};
-
 export function PropertyExplorer({
   intent,
   title,
@@ -136,68 +112,39 @@ export function PropertyExplorer({
 
   return (
     <>
-      <section className="relative overflow-hidden section-space-tight">
+      <section className="relative overflow-hidden px-0 pb-5 pt-5 sm:pb-7 sm:pt-7 lg:pb-8 lg:pt-8">
         <div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_top_left,rgba(29,95,168,0.08),transparent_34%),radial-gradient(circle_at_top_right,rgba(186,156,109,0.12),transparent_22%)]" />
         <PageWrapper animate={false}>
-          <div className="grid gap-8 xl:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.92fr)] xl:items-start">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.95fr)] xl:items-start xl:gap-7">
             <motion.div
-              className="surface-panel relative overflow-hidden p-6 sm:p-7 lg:p-8"
+              className="surface-panel relative order-1 overflow-hidden p-5 sm:p-6 lg:p-7"
               initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.5),transparent_46%)]" />
-              <div className="relative space-y-7">
+              <div className="relative space-y-5">
                 <div className="flex flex-wrap gap-2.5">
                   <span className="inline-flex items-center gap-2 rounded-full border border-brand-blue/12 bg-brand-blue/[0.08] px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-brand-blue">
                     <Sparkles className="h-3.5 w-3.5" />
                     {intentEyebrows[intent]}
                   </span>
-                  <span className="inline-flex rounded-full border border-[rgba(17,32,51,0.08)] bg-white/76 px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-neutral-600">
-                    First-screen filters included
-                  </span>
                 </div>
 
-                <div className="max-w-3xl space-y-5">
+                <div className="max-w-3xl space-y-4">
                   <p className="eyebrow">{intentEyebrows[intent]}</p>
-                  <h1 className="text-[clamp(2.6rem,5vw,4.8rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-brand-navy">
+                  <h1 className="text-[clamp(2.45rem,4.7vw,4.25rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-brand-navy">
                     {title}
                   </h1>
-                  <p className="max-w-2xl text-[1rem] leading-8 text-neutral-700 sm:text-[1.06rem]">{description}</p>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-3">
-                  {explorerStats.map((item) => {
-                    const Icon = item.icon;
-
-                    return (
-                      <div key={item.label} className="rounded-[1.35rem] border border-[rgba(17,32,51,0.08)] bg-white/76 p-4">
-                        <Icon className="h-4 w-4 text-brand-navy" />
-                        <p className="mt-4 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-neutral-600">
-                          {item.label}
-                        </p>
-                        <p className="mt-3 text-lg font-semibold tracking-tight text-brand-navy">{item.value}</p>
-                        <p className="mt-2 text-sm leading-7 text-neutral-600">{item.detail}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="grid gap-3 rounded-[1.5rem] border border-[rgba(17,32,51,0.08)] bg-white/70 p-5 sm:grid-cols-3">
-                  {intentHighlights[intent].map((item) => (
-                    <div key={item.label}>
-                      <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-neutral-600">
-                        {item.label}
-                      </p>
-                      <p className="mt-3 text-sm leading-7 text-neutral-700">{item.value}</p>
-                    </div>
-                  ))}
+                  <p className="max-w-2xl text-[0.98rem] leading-8 text-neutral-700 sm:text-[1.03rem]">
+                    {description}
+                  </p>
                 </div>
               </div>
             </motion.div>
 
             <motion.div
-              className="xl:sticky"
+              className="order-2 xl:sticky"
               style={{ top: "calc(var(--nav-height) + 1rem)" }}
               initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
@@ -216,12 +163,34 @@ export function PropertyExplorer({
               />
             </motion.div>
           </div>
+
+          <motion.div
+            className="mt-5 grid gap-4 md:grid-cols-3"
+            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.58, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {explorerStats.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <div key={item.label} className="surface-panel-soft p-4 sm:p-5">
+                  <Icon className="h-4 w-4 text-brand-navy" />
+                  <p className="mt-4 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-neutral-600">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 text-lg font-semibold tracking-tight text-brand-navy">{item.value}</p>
+                  <p className="mt-2 text-sm leading-7 text-neutral-600">{item.detail}</p>
+                </div>
+              );
+            })}
+          </motion.div>
         </PageWrapper>
       </section>
 
       <PageWrapper
         className={cn(
-          "pb-16 sm:pb-20 lg:pb-24",
+          "pt-2 pb-16 sm:pt-3 sm:pb-20 lg:pt-4 lg:pb-24",
           comparedSuburbs.length >= 2 && "pb-[24rem] md:pb-[21rem]"
         )}
       >
@@ -230,11 +199,11 @@ export function PropertyExplorer({
             <div className="space-y-2">
               <p className="eyebrow">Ranked shortlist</p>
               <h2 className="text-2xl font-semibold tracking-tight text-brand-navy sm:text-[2.15rem]">
-                Meaningful Brisbane matches, ready on first load.
+                Ranked Brisbane matches without the dead space.
               </h2>
               <p className="max-w-3xl text-[0.98rem] leading-8 text-neutral-700">
-                The list below stays tightly structured so the first result feels immediately useful, not buried behind
-                empty hero space or disconnected controls.
+                The intro stays compact, the filters show up early, and the results are positioned to feel like the
+                page starts working immediately.
               </p>
             </div>
 
