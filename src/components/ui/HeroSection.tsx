@@ -75,12 +75,12 @@ export function HeroSection({ highlights }: HeroSectionProps) {
       <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,transparent,rgba(8,17,29,0.88))]" />
 
       <div
-        className="site-shell relative pb-14 sm:pb-16 lg:pb-20"
-        style={{ paddingTop: "calc(var(--nav-height) + clamp(2.5rem, 5vw, 4.75rem))" }}
+        className="site-shell relative pb-16 sm:pb-20 lg:pb-24"
+        style={{ paddingTop: "calc(var(--nav-height) + clamp(3rem, 5.6vw, 5.5rem))" }}
       >
-        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(380px,0.95fr)] xl:gap-16">
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1.02fr)_minmax(380px,0.92fr)] xl:gap-20">
           <motion.div
-            className="space-y-8 pt-2"
+            className="space-y-10 pt-3 lg:pt-5"
             initial={reduceMotion ? false : { opacity: 0, y: 18 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1] }}
@@ -96,13 +96,13 @@ export function HeroSection({ highlights }: HeroSectionProps) {
               ))}
             </div>
 
-            <div className="max-w-3xl space-y-6">
+            <div className="max-w-3xl space-y-7">
               <p className="eyebrow eyebrow-inverse">Brisbane property discovery platform</p>
-              <h1 className="max-w-4xl text-[clamp(3.35rem,7vw,6.6rem)] font-semibold leading-[0.94] tracking-[-0.05em] text-white">
+              <h1 className="max-w-[10.5ch] text-[clamp(3.05rem,6.4vw,5.9rem)] font-semibold leading-[0.97] tracking-[-0.05em] text-white">
                 Brisbane suburb intelligence,{" "}
                 <span className="display-title text-[#f2ebdf]">refined for real decisions.</span>
               </h1>
-              <p className="max-w-2xl text-[1.02rem] leading-8 text-white/72 sm:text-[1.1rem]">
+              <p className="max-w-[38rem] text-[1.02rem] leading-8 text-white/72 sm:text-[1.1rem]">
                 SuburbIQ helps renters, buyers, and investors compare Brisbane suburbs through a premium editorial
                 lens: measured, data-backed, and built to surface trade-offs clearly from the first screen.
               </p>
@@ -118,7 +118,7 @@ export function HeroSection({ highlights }: HeroSectionProps) {
               </CTAButton>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-3 lg:gap-5">
               {heroStats.map((item, index) => (
                 <motion.div
                   key={item.label}
@@ -138,7 +138,7 @@ export function HeroSection({ highlights }: HeroSectionProps) {
           </motion.div>
 
           <motion.div
-            className="surface-panel-dark relative overflow-hidden p-6 sm:p-7 lg:p-8"
+            className="surface-panel-dark relative overflow-hidden p-6 sm:p-8 lg:p-10"
             initial={reduceMotion ? false : { opacity: 0, y: 24 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ duration: 0.74, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}

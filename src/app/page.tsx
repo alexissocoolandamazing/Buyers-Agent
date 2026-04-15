@@ -88,7 +88,7 @@ export default function HomePage() {
 
       <section className="section-space">
         <PageWrapper>
-          <div className="space-y-10">
+          <div className="space-y-12">
             <SectionHeader
               eyebrow="Platform overview"
               title="One premium platform, shaped around the three Brisbane property decisions that matter."
@@ -96,7 +96,7 @@ export default function HomePage() {
               size="lg"
             />
 
-            <div className="grid gap-5 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-3">
               {valueCards.map((card) => {
                 const Icon = card.icon;
 
@@ -121,8 +121,8 @@ export default function HomePage() {
 
       <section className="section-space pt-0">
         <PageWrapper>
-          <div className="surface-panel overflow-hidden p-6 sm:p-8 lg:p-10">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
+          <div className="surface-panel overflow-hidden p-6 sm:p-9 lg:p-11">
+            <div className="grid gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start">
               <div className="space-y-6">
                 <SectionHeader
                   eyebrow="Featured suburbs"
@@ -130,7 +130,7 @@ export default function HomePage() {
                   description="These are the strongest current picks in the demo dataset, each representing a different type of Brisbane property brief."
                 />
 
-                <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
                   <div className="rounded-[1.35rem] border border-[rgba(17,32,51,0.08)] bg-white/78 p-4">
                     <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-neutral-600">
                       Rent benchmark
@@ -161,7 +161,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="grid gap-5 lg:grid-cols-3">
+              <div className="grid gap-6 lg:grid-cols-3">
                 <SuburbCard
                   suburb={highlights.rent}
                   mode="editorial"
@@ -194,14 +194,14 @@ export default function HomePage() {
 
       <section className="section-space">
         <PageWrapper>
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
             <SectionHeader
               eyebrow="How it works"
               title="A tighter workflow from broad brief to shortlist."
               description="The experience is designed to feel closer to a premium product memo than a noisy search results page. Each step reduces uncertainty without adding clutter."
             />
 
-            <div className="grid gap-5 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-3">
               {steps.map((step) => (
                 <StepCard key={step.number} number={step.number} label={step.label} description={step.description} />
               ))}
@@ -212,8 +212,8 @@ export default function HomePage() {
 
       <section className="section-space">
         <PageWrapper>
-          <div className="surface-panel-dark overflow-hidden p-6 text-white sm:p-8 lg:p-10">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+          <div className="surface-panel-dark overflow-hidden p-6 text-white sm:p-9 lg:p-11">
+            <div className="grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
               <SectionHeader
                 eyebrow="Trust"
                 title="Premium on the surface, transparent underneath."
@@ -228,8 +228,8 @@ export default function HomePage() {
 
       <section className="section-space pt-0">
         <PageWrapper>
-          <div className="surface-panel overflow-hidden p-6 sm:p-8 lg:p-10">
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-center">
+          <div className="surface-panel overflow-hidden p-6 sm:p-9 lg:p-11">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
               <div className="space-y-5">
                 <p className="eyebrow">Start exploring</p>
                 <h2 className="text-3xl font-semibold tracking-tight text-brand-navy sm:text-[2.6rem]">

@@ -141,23 +141,12 @@ export function Navbar() {
             </nav>
 
             <div className="hidden items-center gap-3 lg:flex">
-              <div className="hidden items-center gap-2 rounded-full border border-white/8 bg-white/6 px-3 py-2 xl:flex">
+              <div className="flex items-center gap-2 rounded-full border border-white/8 bg-white/6 px-3 py-2">
                 <Sparkles className="h-3.5 w-3.5 text-[#d8c39f]" />
                 <span className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-white/56">
                   Trusted suburb intelligence
                 </span>
               </div>
-
-              <CTAButton
-                href="/rent"
-                variant="primary"
-                tone="inverse"
-                size="sm"
-                className="gap-2 rounded-full border border-white/18 bg-white px-5 py-3 text-[0.92rem] font-semibold text-brand-navy shadow-[0_18px_34px_-20px_rgba(255,255,255,0.55)] hover:bg-[#f4efe6]"
-              >
-                Get started
-                <ArrowRight className="h-4 w-4" />
-              </CTAButton>
             </div>
 
             <button
@@ -242,9 +231,7 @@ export function Navbar() {
               </div>
 
               <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4">
-                <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-white/48">
-                  Start exploring
-                </p>
+                <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-white/48">Open rankings</p>
                 <p className="mt-2 text-sm leading-relaxed text-white/62">
                   See ranked Brisbane suburbs with clear filters and plain-English reasoning from the first screen.
                 </p>
@@ -255,7 +242,7 @@ export function Navbar() {
                   className="mt-4 w-full justify-center gap-2 rounded-full bg-white px-5 py-3 text-brand-navy"
                   linkProps={{ onClick: () => setOpenPathname(null) }}
                 >
-                  Get started
+                  Explore rent rankings
                   <ArrowRight className="h-4 w-4" />
                 </CTAButton>
               </div>
