@@ -1,7 +1,21 @@
 import type { Metadata } from "next";
+import { Fraunces, Manrope } from "next/font/google";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import "./globals.css";
+
+const sans = Manrope({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const display = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  weight: ["500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://suburbiq.example"),
@@ -34,10 +48,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="min-h-full bg-neutral-50 text-neutral-700">
+      <body className={`${sans.variable} ${display.variable} min-h-full bg-neutral-50 text-neutral-700`}>
         <div className="flex min-h-full flex-col">
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1" style={{ paddingTop: "var(--nav-height)" }}>
+            {children}
+          </main>
           <Footer />
         </div>
       </body>

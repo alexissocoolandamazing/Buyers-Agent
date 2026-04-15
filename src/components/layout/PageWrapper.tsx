@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +10,8 @@ interface PageWrapperProps {
   as?: "div" | "section";
   id?: string;
   animate?: boolean;
+  width?: "default" | "narrow" | "wide";
+  delay?: number;
 }
 
 export function PageWrapper({
@@ -18,10 +20,17 @@ export function PageWrapper({
   as = "section",
   id,
   animate = true,
+  width = "default",
+  delay = 0,
 }: PageWrapperProps) {
-  const sharedClassName = cn("mx-auto max-w-6xl px-6", className);
+  const reduceMotion = useReducedMotion();
+  const sharedClassName = cn(
+    width === "narrow" ? "site-shell-narrow" : "site-shell",
+    width === "wide" && "max-w-[88rem]",
+    className
+  );
 
-  if (!animate) {
+  if (!animate || reduceMotion) {
     const StaticTag = as;
 
     return (
@@ -37,10 +46,10 @@ export function PageWrapper({
     <MotionTag
       id={id}
       className={sharedClassName}
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      viewport={{ once: true, amount: 0.2, margin: "-8% 0px" }}
+      transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay }}
     >
       {children}
     </MotionTag>

@@ -18,15 +18,17 @@ export function DisclaimerCard({
   className,
 }: DisclaimerCardProps) {
   return (
-    <div className={cn("rounded-xl border border-brand-border bg-neutral-50 p-5", className)}>
+    <div className={cn("surface-panel-soft p-6 sm:p-7", className)}>
       <div className="flex items-start gap-4">
-        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-neutral-600" />
+        <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[rgba(17,32,51,0.08)] bg-white/80">
+          <AlertCircle className="h-5 w-5 text-neutral-600" />
+        </div>
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-brand-navy">{heading}</h3>
-          <p className="text-sm italic leading-relaxed text-neutral-700">
+          <h3 className="text-xl font-semibold tracking-tight text-brand-navy">{heading}</h3>
+          <p className="text-[0.98rem] leading-8 text-neutral-700">
             {body}{" "}
             {linkHref && linkLabel ? (
-              <Link href={linkHref} className="font-medium text-brand-blue hover:underline">
+              <Link href={linkHref} className="font-semibold text-brand-blue transition hover:text-brand-navy">
                 {linkLabel}
               </Link>
             ) : null}
