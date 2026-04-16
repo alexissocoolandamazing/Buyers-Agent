@@ -3,8 +3,8 @@
 
 :root {
   color-scheme: light;
-  --background: #f3f1eb;
-  --background-soft: #f8f7f4;
+  --background: #f4f1eb;
+  --background-soft: #f8f6f2;
   --surface: rgba(255, 255, 255, 0.84);
   --surface-strong: rgba(255, 255, 255, 0.97);
   --surface-muted: rgba(246, 248, 251, 0.88);
@@ -20,14 +20,14 @@
   --accent-strong: #123e70;
   --accent-soft: rgba(29, 95, 168, 0.12);
   --accent-gold: #bb9a67;
-  --shadow-soft: 0 16px 36px -28px rgba(11, 24, 40, 0.18);
-  --shadow-panel: 0 28px 70px -42px rgba(11, 24, 40, 0.24);
+  --shadow-soft: 0 20px 44px -32px rgba(11, 24, 40, 0.18);
+  --shadow-panel: 0 34px 82px -46px rgba(11, 24, 40, 0.26);
   --shadow-nav: 0 18px 42px -28px rgba(8, 18, 31, 0.48);
-  --radius-panel: 1.625rem;
-  --radius-card: 1.25rem;
-  --radius-control: 1rem;
+  --radius-panel: 1.75rem;
+  --radius-card: 1.35rem;
+  --radius-control: 1.1rem;
   --nav-height: 5.1rem;
-  --page-max-width: 80rem;
+  --page-max-width: 84rem;
   --page-narrow-width: 72rem;
   --chart-rent: 29 95 168;
   --chart-buy: 15 41 66;
@@ -44,9 +44,9 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at top left, rgba(212, 222, 236, 0.78), transparent 34%),
-    radial-gradient(circle at top right, rgba(197, 211, 231, 0.58), transparent 28%),
-    linear-gradient(180deg, #f0ede5 0%, #f7f7f4 18%, #eef3f8 100%);
+    radial-gradient(circle at top left, rgba(214, 223, 236, 0.82), transparent 34%),
+    radial-gradient(circle at top right, rgba(203, 215, 233, 0.6), transparent 28%),
+    linear-gradient(180deg, #f2eee7 0%, #f8f7f3 18%, #edf3f8 100%);
   color: var(--text-default);
   font-family: var(--font-sans), sans-serif;
   text-rendering: optimizeLegibility;
@@ -197,7 +197,7 @@ p {
 
   .field-control {
     @apply w-full appearance-none rounded-[1.1rem] px-4 py-3.5 text-[0.98rem] text-neutral-800 transition duration-200 ease-out focus:outline-none;
-    min-height: 3.35rem;
+    min-height: 3.6rem;
     border: 1px solid var(--border-default);
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.92)),

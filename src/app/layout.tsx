@@ -47,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" data-scroll-behavior="smooth">
       <body className={`${sans.variable} ${display.variable} min-h-full bg-neutral-50 text-neutral-700`}>
         <div className="flex min-h-full flex-col">
           <Navbar />

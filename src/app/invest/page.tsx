@@ -6,7 +6,7 @@ import { PropertyExplorer } from "@/components/ui/PropertyExplorer";
 export const metadata: Metadata = {
   title: "Invest",
   description:
-    "Explore Brisbane investment suburbs with yield, entry price, and demand pressure explained clearly.",
+    "Explore Brisbane investment suburbs with a premium shortlist, default full-region results, and clearer yield and demand signals.",
 };
 
 export default function InvestPage() {
@@ -14,8 +14,8 @@ export default function InvestPage() {
     <>
       <PropertyExplorer
         intent="invest"
-        title="Invest with cleaner logic."
-        description="Open on the full shortlist, then apply an entry budget and region when you want a more targeted investor view."
+        title="Invest with cleaner signals."
+        description="Load straight into the full Brisbane investment shortlist, then tighten the lens with region and entry budget when you want a more targeted investor read."
         budgetLabel="Entry budget"
       />
 
