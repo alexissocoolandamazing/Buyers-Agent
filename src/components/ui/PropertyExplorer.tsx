@@ -1,12 +1,12 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Layers3, LineChart, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { ComparePanel } from "@/components/ui/ComparePanel";
-import { FilterBar } from "@/components/ui/FilterBar";
-import { SuburbCard } from "@/components/ui/SuburbCard";
+import { FilterPanel } from "@/components/ui/FilterPanel";
+import { PageHero } from "@/components/ui/PageHero";
+import { ResultsList } from "@/components/ui/ResultsList";
 import { formatMoneyShort, formatPercent, formatRent } from "@/lib/format";
 import {
   budgetOptionsByIntent,
@@ -24,11 +24,35 @@ interface PropertyExplorerProps {
   budgetLabel: string;
 }
 
+const RESULTS_PER_PAGE = 5;
+
 const intentEyebrows: Record<Intent, string> = {
-  rent: "Brisbane rental rankings",
-  buy: "Brisbane buying brief",
-  invest: "Brisbane investment brief",
+  rent: "Brisbane rental intelligence",
+  buy: "Brisbane buying intelligence",
+  invest: "Brisbane investment intelligence",
 };
+
+const heroBadgeLabels: Record<Intent, string> = {
+  rent: "Rental intelligence",
+  buy: "Buying intelligence",
+  invest: "Investment intelligence",
+};
+
+const filterTitles: Record<Intent, string> = {
+  rent: "Refine the rental shortlist",
+  buy: "Refine the buying shortlist",
+  invest: "Refine the investment shortlist",
+};
+
+const budgetHints: Record<Intent, string> = {
+  rent: "Budget filters narrow the current rental shortlist.",
+  buy: "Purchase filters refine the live buying brief.",
+  invest: "Entry filters tighten the investor read without hiding the list.",
+};
+
+function getBudgetOptionLabel(intent: Intent, value: string) {
+  return budgetOptionsByIntent[intent].find((option) => option.value === value)?.label ?? "All budgets";
+}
 
 export function PropertyExplorer({
   intent,
@@ -44,21 +68,41 @@ export function PropertyExplorer({
   const [draftBudgetValue, setDraftBudgetValue] = useState(defaultBudget);
   const [appliedRegion, setAppliedRegion] = useState<Region | "All Regions">(defaultRegion);
   const [appliedBudgetValue, setAppliedBudgetValue] = useState(defaultBudget);
+  const [currentPage, setCurrentPage] = useState(1);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
   const [compareError, setCompareError] = useState<string | null>(null);
 
   const results = getFilteredSuburbs(intent, appliedRegion, appliedBudgetValue);
+  const totalPages = Math.max(1, Math.ceil(results.length / RESULTS_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const pageStart = (safeCurrentPage - 1) * RESULTS_PER_PAGE;
+  const pageResults = results.slice(pageStart, pageStart + RESULTS_PER_PAGE);
   const topResult = results[0];
   const hasPendingChanges =
     draftRegion !== appliedRegion || draftBudgetValue !== appliedBudgetValue;
-  const selectedBudget =
-    budgetOptionsByIntent[intent].find((option) => option.value === appliedBudgetValue)?.label ??
-    "All budgets";
+  const appliedBudgetLabel = getBudgetOptionLabel(intent, appliedBudgetValue);
+  const draftBudgetLabel = getBudgetOptionLabel(intent, draftBudgetValue);
 
   const comparedSuburbs = compareIds
     .map((id) => suburbs.find((suburb) => suburb.id === id))
     .filter((suburb): suburb is (typeof suburbs)[number] => Boolean(suburb));
+
+  function getLeadSignal() {
+    if (!topResult) {
+      return "Reset the filters to restore the full shortlist.";
+    }
+
+    if (intent === "rent") {
+      return `${formatRent(topResult.weeklyRent)} median rent with ${topResult.rentScores.amenity.toFixed(1)} / 10 renter fit.`;
+    }
+
+    if (intent === "buy") {
+      return `${formatMoneyShort(topResult.medianPrice)} guide with ${topResult.buyScores.purchaseValue.toFixed(1)} / 10 value snapshot.`;
+    }
+
+    return `${formatPercent(topResult.grossYield)} yield with ${topResult.investScores.demand.toFixed(1)} / 10 demand pressure.`;
+  }
 
   function clearCompareState() {
     setCompareIds([]);
@@ -67,17 +111,23 @@ export function PropertyExplorer({
   }
 
   function handleApply() {
-    setAppliedRegion(draftRegion);
-    setAppliedBudgetValue(draftBudgetValue);
-    clearCompareState();
+    startTransition(() => {
+      setAppliedRegion(draftRegion);
+      setAppliedBudgetValue(draftBudgetValue);
+      setCurrentPage(1);
+      clearCompareState();
+    });
   }
 
   function handleReset() {
-    setDraftRegion(defaultRegion);
-    setDraftBudgetValue(defaultBudget);
-    setAppliedRegion(defaultRegion);
-    setAppliedBudgetValue(defaultBudget);
-    clearCompareState();
+    startTransition(() => {
+      setDraftRegion(defaultRegion);
+      setDraftBudgetValue(defaultBudget);
+      setAppliedRegion(defaultRegion);
+      setAppliedBudgetValue(defaultBudget);
+      setCurrentPage(1);
+      clearCompareState();
+    });
   }
 
   function handleCompareToggle(id: string) {
@@ -108,77 +158,136 @@ export function PropertyExplorer({
     });
   }
 
-  const explorerStats = [
+  function handlePageChange(page: number) {
+    const nextPage = Math.max(1, Math.min(totalPages, page));
+
+    if (nextPage === safeCurrentPage) {
+      return;
+    }
+
+    setCurrentPage(nextPage);
+
+    const resultsSection = document.getElementById("property-results");
+    resultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  const heroStats = [
     {
-      label: "Current view",
+      label: "Current scope",
       value: appliedRegion === "All Regions" ? "All Brisbane regions" : appliedRegion,
-      detail: selectedBudget,
-      icon: Layers3,
+      detail:
+        results.length > 0
+          ? `${results.length} suburbs currently match this brief.`
+          : "Reset the filters to reopen the full shortlist.",
+    },
+    {
+      label: "Budget lens",
+      value: appliedBudgetLabel,
+      detail: budgetHints[intent],
+    },
+    {
+      label: "Lead signal",
+      value: topResult?.name ?? "No current match",
+      detail: getLeadSignal(),
+    },
+  ];
+
+  const filterSummaryItems = [
+    {
+      label: "Region",
+      value: appliedRegion,
+      detail:
+        appliedRegion === "All Regions"
+          ? "Full Brisbane coverage remains visible by default."
+          : "The shortlist is narrowed to this region.",
+    },
+    {
+      label: budgetLabel,
+      value: appliedBudgetLabel,
+      detail: budgetHints[intent],
+    },
+    {
+      label: "Results in view",
+      value: `${results.length} suburbs`,
+      detail:
+        results.length > 0
+          ? `Showing page ${safeCurrentPage} of ${totalPages}.`
+          : "No results in the current shortlist.",
     },
     {
       label: "Lead suburb",
       value: topResult?.name ?? "No current match",
-      detail: topResult
-        ? intent === "rent"
-          ? formatRent(topResult.weeklyRent)
-          : intent === "buy"
-            ? formatMoneyShort(topResult.medianPrice)
-            : formatPercent(topResult.grossYield)
-        : "Reset to see all suburbs",
-      icon: LineChart,
+      detail: getLeadSignal(),
     },
   ];
 
+  const pendingSummaryItems = hasPendingChanges
+    ? [
+        {
+          label: "Pending region",
+          value: draftRegion,
+        },
+        {
+          label: `Pending ${budgetLabel.toLowerCase()}`,
+          value: draftBudgetLabel,
+        },
+      ]
+    : undefined;
+
+  const filterDescription = hasPendingChanges
+    ? "Your updated filters are staged here. Apply them when you want to refresh the shortlist below."
+    : results.length > 0
+      ? `${results.length} suburbs are already in view${topResult ? `, with ${topResult.name} currently leading.` : "."}`
+      : "No suburbs match this filter combination right now.";
+
+  const filterHelperText = hasPendingChanges
+    ? "Apply to update the live shortlist and return to page 1."
+    : "Default results are already loaded below, with 5 suburbs per page.";
+
+  const outerSpacingClassName = cn(
+    "pt-2 sm:pt-3 lg:pt-4",
+    comparedSuburbs.length >= 2 ? "pb-[24rem] md:pb-[21rem]" : "pb-16 sm:pb-20 lg:pb-24"
+  );
+
   return (
     <>
-      <section className="relative overflow-hidden px-0 pb-6 pt-5 sm:pb-8 sm:pt-7 lg:pb-10 lg:pt-8">
-        <div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_top_left,rgba(29,95,168,0.08),transparent_36%),radial-gradient(circle_at_top_right,rgba(186,156,109,0.1),transparent_22%)]" />
+      <section className="relative overflow-hidden px-0 pb-10 pt-6 sm:pb-12 sm:pt-8 lg:pb-14 lg:pt-10">
+        <div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_top_left,rgba(29,95,168,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(187,154,103,0.09),transparent_28%)]" />
 
         <PageWrapper animate={false}>
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.9fr)] xl:items-start xl:gap-8">
+          <div className="grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(24rem,0.92fr)] xl:items-stretch xl:gap-10">
             <motion.div
-              className="surface-panel relative overflow-hidden p-5 sm:p-6 lg:p-7"
               initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.55),transparent_46%)]" />
-              <div className="relative space-y-5">
-                <span className="inline-flex items-center gap-2 rounded-full border border-brand-blue/12 bg-brand-blue/[0.08] px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-brand-blue">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  {intentEyebrows[intent]}
-                </span>
-
-                <div className="max-w-3xl space-y-3.5">
-                  <p className="eyebrow">{intentEyebrows[intent]}</p>
-                  <h1 className="text-[clamp(2.35rem,4.7vw,4rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-brand-navy">
-                    {title}
-                  </h1>
-                  <p className="max-w-2xl text-[0.98rem] leading-7 text-neutral-700 sm:text-[1rem]">
-                    {description}
-                  </p>
-                </div>
-              </div>
+              <PageHero
+                badgeLabel={heroBadgeLabels[intent]}
+                eyebrow={intentEyebrows[intent]}
+                title={title}
+                description={description}
+                stats={heroStats}
+              />
             </motion.div>
 
             <motion.div
               className="xl:sticky"
-              style={{ top: "calc(var(--nav-height) + 1rem)" }}
+              style={{ top: "calc(var(--nav-height) + 1.25rem)" }}
               initial={reduceMotion ? false : { opacity: 0, y: 20 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
-              <FilterBar
-                intent={intent}
+              <FilterPanel
+                title={filterTitles[intent]}
+                description={filterDescription}
                 region={draftRegion}
-                appliedRegion={appliedRegion}
                 budgetValue={draftBudgetValue}
-                appliedBudgetValue={appliedBudgetValue}
                 budgetLabel={budgetLabel}
                 budgetOptions={budgetOptionsByIntent[intent]}
-                resultCount={results.length}
-                topMatch={topResult?.name}
+                summaryItems={filterSummaryItems}
+                pendingSummaryItems={pendingSummaryItems}
                 hasPendingChanges={hasPendingChanges}
+                helperText={filterHelperText}
                 onRegionChange={setDraftRegion}
                 onBudgetChange={setDraftBudgetValue}
                 onApply={handleApply}
@@ -186,88 +295,36 @@ export function PropertyExplorer({
               />
             </motion.div>
           </div>
-
-          <motion.div
-            className="mt-5 grid gap-4 md:grid-cols-2"
-            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.54, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {explorerStats.map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div key={item.label} className="surface-panel-soft p-4 sm:p-5">
-                  <Icon className="h-4 w-4 text-brand-navy" />
-                  <p className="mt-4 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-neutral-600">
-                    {item.label}
-                  </p>
-                  <p className="mt-2 text-lg font-semibold tracking-tight text-brand-navy">{item.value}</p>
-                  <p className="mt-2 text-sm leading-6 text-neutral-600">{item.detail}</p>
-                </div>
-              );
-            })}
-          </motion.div>
         </PageWrapper>
       </section>
 
-      <PageWrapper
-        className={cn(
-          "pb-16 pt-2 sm:pb-20 sm:pt-3 lg:pb-24 lg:pt-4",
-          comparedSuburbs.length >= 2 && "pb-[24rem] md:pb-[21rem]"
-        )}
-      >
-        <div className="space-y-6">
-          <div className="flex flex-col gap-4 border-b border-[rgba(17,32,51,0.08)] pb-5 sm:flex-row sm:items-end sm:justify-between">
-            <div className="space-y-2">
-              <p className="eyebrow">Ranked shortlist</p>
-              <h2 className="text-2xl font-semibold tracking-tight text-brand-navy sm:text-[2rem]">
-                Brisbane matches, kept easy to scan.
-              </h2>
-              <p className="max-w-2xl text-[0.96rem] leading-7 text-neutral-700">
-                The page starts broad, then narrows only when you apply a new brief.
-              </p>
-            </div>
-
-            <div className="rounded-full border border-[rgba(17,32,51,0.08)] bg-white/78 px-4 py-2 text-sm font-semibold tracking-tight text-neutral-700">
-              {results.length > 0 ? `${results.length} suburbs showing` : "No current matches"}
-            </div>
-          </div>
-
+      <PageWrapper className={outerSpacingClassName}>
+        <motion.div
+          className="space-y-5"
+          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.54, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        >
           {compareError ? (
             <p className="rounded-[1.15rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
               {compareError}
             </p>
           ) : null}
 
-          {results.length ? (
-            <div className="grid gap-4">
-              {results.map((suburb, index) => (
-                <SuburbCard
-                  key={suburb.id}
-                  suburb={suburb}
-                  mode={intent}
-                  rank={index + 1}
-                  compareSelected={compareIds.includes(suburb.id)}
-                  onCompareToggle={intent === "rent" ? handleCompareToggle : undefined}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="surface-panel p-7 sm:p-9">
-              <div className="max-w-xl space-y-3">
-                <p className="eyebrow">No matches</p>
-                <h2 className="text-2xl font-semibold tracking-tight text-brand-navy">
-                  Widen the brief to bring the shortlist back.
-                </h2>
-                <p className="text-[0.96rem] leading-7 text-neutral-700">
-                  This combination is narrower than the current demo data. Reset the filters or apply a broader
-                  region or budget.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
+          <ResultsList
+            intent={intent}
+            results={results}
+            pageResults={pageResults}
+            currentPage={safeCurrentPage}
+            totalPages={totalPages}
+            appliedRegion={appliedRegion}
+            appliedBudgetLabel={appliedBudgetLabel}
+            onPageChange={handlePageChange}
+            onReset={handleReset}
+            compareIds={compareIds}
+            onCompareToggle={handleCompareToggle}
+          />
+        </motion.div>
       </PageWrapper>
 
       {intent === "rent" && comparedSuburbs.length >= 2 ? (

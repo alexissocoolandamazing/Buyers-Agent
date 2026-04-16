@@ -21,7 +21,7 @@ const toneClassNames: Record<TagBadgeTone, string> = {
   neutral: "border-[rgba(17,32,51,0.08)] bg-[rgba(255,255,255,0.7)] text-neutral-700",
   green: "border-green-200/90 bg-green-50 text-green-700",
   blue: "border-blue-200/90 bg-blue-50 text-blue-700",
-  purple: "border-violet-200/90 bg-violet-50 text-violet-700",
+  purple: "border-indigo-200/90 bg-indigo-50 text-indigo-700",
   amber: "border-amber-200/90 bg-amber-50 text-amber-700",
 };
 
