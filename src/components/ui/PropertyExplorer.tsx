@@ -39,15 +39,9 @@ const heroBadgeLabels: Record<Intent, string> = {
 };
 
 const filterTitles: Record<Intent, string> = {
-  rent: "Refine the rental shortlist",
-  buy: "Refine the buying shortlist",
-  invest: "Refine the investment shortlist",
-};
-
-const budgetHints: Record<Intent, string> = {
-  rent: "Budget filters narrow the current rental shortlist.",
-  buy: "Purchase filters refine the live buying brief.",
-  invest: "Entry filters tighten the investor read without hiding the list.",
+  rent: "Refine the shortlist",
+  buy: "Refine the shortlist",
+  invest: "Refine the shortlist",
 };
 
 function getBudgetOptionLabel(intent: Intent, value: string) {
@@ -87,22 +81,6 @@ export function PropertyExplorer({
   const comparedSuburbs = compareIds
     .map((id) => suburbs.find((suburb) => suburb.id === id))
     .filter((suburb): suburb is (typeof suburbs)[number] => Boolean(suburb));
-
-  function getLeadSignal() {
-    if (!topResult) {
-      return "Reset the filters to restore the full shortlist.";
-    }
-
-    if (intent === "rent") {
-      return `${formatRent(topResult.weeklyRent)} median rent with ${topResult.rentScores.amenity.toFixed(1)} / 10 renter fit.`;
-    }
-
-    if (intent === "buy") {
-      return `${formatMoneyShort(topResult.medianPrice)} guide with ${topResult.buyScores.purchaseValue.toFixed(1)} / 10 value snapshot.`;
-    }
-
-    return `${formatPercent(topResult.grossYield)} yield with ${topResult.investScores.demand.toFixed(1)} / 10 demand pressure.`;
-  }
 
   function clearCompareState() {
     setCompareIds([]);
@@ -171,111 +149,77 @@ export function PropertyExplorer({
     resultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  const heroStats = [
-    {
-      label: "Current scope",
-      value: appliedRegion === "All Regions" ? "All Brisbane regions" : appliedRegion,
-      detail:
-        results.length > 0
-          ? `${results.length} suburbs currently match this brief.`
-          : "Reset the filters to reopen the full shortlist.",
-    },
-    {
-      label: "Budget lens",
-      value: appliedBudgetLabel,
-      detail: budgetHints[intent],
-    },
-    {
-      label: "Lead signal",
-      value: topResult?.name ?? "No current match",
-      detail: getLeadSignal(),
-    },
-  ];
+  function getLeadSummary() {
+    if (!topResult) {
+      return "No suburb matches the current brief right now.";
+    }
 
-  const filterSummaryItems = [
-    {
-      label: "Region",
-      value: appliedRegion,
-      detail:
-        appliedRegion === "All Regions"
-          ? "Full Brisbane coverage remains visible by default."
-          : "The shortlist is narrowed to this region.",
-    },
-    {
-      label: budgetLabel,
-      value: appliedBudgetLabel,
-      detail: budgetHints[intent],
-    },
-    {
-      label: "Results in view",
-      value: `${results.length} suburbs`,
-      detail:
-        results.length > 0
-          ? `Showing page ${safeCurrentPage} of ${totalPages}.`
-          : "No results in the current shortlist.",
-    },
-    {
-      label: "Lead suburb",
-      value: topResult?.name ?? "No current match",
-      detail: getLeadSignal(),
-    },
+    if (intent === "rent") {
+      return `${results.length} suburbs ready. ${topResult.name} leads at ${formatRent(topResult.weeklyRent)}.`;
+    }
+
+    if (intent === "buy") {
+      return `${results.length} suburbs ready. ${topResult.name} leads at ${formatMoneyShort(topResult.medianPrice)}.`;
+    }
+
+    return `${results.length} suburbs ready. ${topResult.name} leads at ${formatPercent(topResult.grossYield)} yield.`;
+  }
+
+  const summaryItems = [
+    { label: "Region", value: appliedRegion },
+    { label: budgetLabel, value: appliedBudgetLabel },
+    { label: "Results", value: `${results.length} suburbs` },
   ];
 
   const pendingSummaryItems = hasPendingChanges
     ? [
-        {
-          label: "Pending region",
-          value: draftRegion,
-        },
-        {
-          label: `Pending ${budgetLabel.toLowerCase()}`,
-          value: draftBudgetLabel,
-        },
+        { label: "Region", value: draftRegion },
+        { label: budgetLabel, value: draftBudgetLabel },
       ]
     : undefined;
 
   const filterDescription = hasPendingChanges
-    ? "Your updated filters are staged here. Apply them when you want to refresh the shortlist below."
-    : results.length > 0
-      ? `${results.length} suburbs are already in view${topResult ? `, with ${topResult.name} currently leading.` : "."}`
-      : "No suburbs match this filter combination right now.";
+    ? "Adjust the filters here, then apply the new shortlist when you are ready."
+    : "The full shortlist is already loaded below. Use the controls only when you want to narrow it.";
 
-  const filterHelperText = hasPendingChanges
-    ? "Apply to update the live shortlist and return to page 1."
-    : "Default results are already loaded below, with 5 suburbs per page.";
+  const helperText = hasPendingChanges
+    ? "Apply to refresh the results and reset to page 1."
+    : "Results are already visible below with 5 suburbs per page.";
 
   const outerSpacingClassName = cn(
-    "pt-2 sm:pt-3 lg:pt-4",
-    comparedSuburbs.length >= 2 ? "pb-[24rem] md:pb-[21rem]" : "pb-16 sm:pb-20 lg:pb-24"
+    "pt-1 sm:pt-2 lg:pt-3",
+    comparedSuburbs.length >= 2
+      ? compareOpen
+        ? "pb-[18rem] md:pb-[15rem]"
+        : "pb-[8.5rem] md:pb-[9.5rem]"
+      : "pb-16 sm:pb-20 lg:pb-24"
   );
 
   return (
     <>
-      <section className="relative overflow-hidden px-0 pb-10 pt-6 sm:pb-12 sm:pt-8 lg:pb-14 lg:pt-10">
-        <div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_top_left,rgba(29,95,168,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(187,154,103,0.09),transparent_28%)]" />
+      <section className="relative overflow-hidden px-0 pb-7 pt-5 sm:pb-8 sm:pt-7 lg:pb-10 lg:pt-8">
+        <div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_top_left,rgba(29,95,168,0.1),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(187,154,103,0.08),transparent_28%)]" />
 
         <PageWrapper animate={false}>
-          <div className="grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(24rem,0.92fr)] xl:items-stretch xl:gap-10">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(22rem,0.84fr)] xl:items-start xl:gap-8">
             <motion.div
-              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 16 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
               <PageHero
                 badgeLabel={heroBadgeLabels[intent]}
                 eyebrow={intentEyebrows[intent]}
                 title={title}
                 description={description}
-                stats={heroStats}
+                summary={getLeadSummary()}
               />
             </motion.div>
 
             <motion.div
-              className="xl:sticky"
-              style={{ top: "calc(var(--nav-height) + 1.25rem)" }}
-              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 16 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.45, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
             >
               <FilterPanel
                 title={filterTitles[intent]}
@@ -284,10 +228,10 @@ export function PropertyExplorer({
                 budgetValue={draftBudgetValue}
                 budgetLabel={budgetLabel}
                 budgetOptions={budgetOptionsByIntent[intent]}
-                summaryItems={filterSummaryItems}
+                summaryItems={summaryItems}
                 pendingSummaryItems={pendingSummaryItems}
                 hasPendingChanges={hasPendingChanges}
-                helperText={filterHelperText}
+                helperText={helperText}
                 onRegionChange={setDraftRegion}
                 onBudgetChange={setDraftBudgetValue}
                 onApply={handleApply}
@@ -298,13 +242,8 @@ export function PropertyExplorer({
         </PageWrapper>
       </section>
 
-      <PageWrapper className={outerSpacingClassName}>
-        <motion.div
-          className="space-y-5"
-          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.54, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-        >
+      <PageWrapper animate={false} className={outerSpacingClassName}>
+        <div className="space-y-5">
           {compareError ? (
             <p className="rounded-[1.15rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
               {compareError}
@@ -324,7 +263,7 @@ export function PropertyExplorer({
             compareIds={compareIds}
             onCompareToggle={handleCompareToggle}
           />
-        </motion.div>
+        </div>
       </PageWrapper>
 
       {intent === "rent" && comparedSuburbs.length >= 2 ? (

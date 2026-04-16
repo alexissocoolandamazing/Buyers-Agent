@@ -77,7 +77,7 @@ export function Footer() {
           </div>
 
           <div className="mt-8 flex flex-col gap-3 border-t border-[rgba(17,32,51,0.08)] pt-6 text-sm text-neutral-500 sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2026 SuburbIQ. Data is informational only. Not financial or property advice.</p>
+            <p>(c) 2026 SuburbIQ. Data is informational only. Not financial or property advice.</p>
             <p>Designed for calm, data-backed Brisbane property discovery.</p>
           </div>
         </div>

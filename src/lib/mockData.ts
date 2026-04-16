@@ -58,7 +58,7 @@ export const suburbs: Suburb[] = [
     name: "Paddington",
     region: "Inner City",
     shortDescription:
-      "Character homes, walkable ridgelines, and a polished café strip make Paddington one of the city's most magnetic urban suburbs.",
+      "Character homes, walkable ridgelines, and a polished cafe strip make Paddington one of the city's most magnetic urban suburbs.",
     rentScores: {
       affordability: 7.6,
       rentToValue: 7.9,
@@ -180,7 +180,7 @@ export const suburbs: Suburb[] = [
       familyLiveability: 8.4,
       reasons: [
         "Wynnum remains more attainable than several inner-city lifestyle markets with a similar emotional pull.",
-        "Water access, cafés, and a slower rhythm create a strong owner-occupier proposition.",
+        "Water access, cafes, and a slower rhythm create a strong owner-occupier proposition.",
         "Families get school choice, green space, and a less compressed street environment than the inner ring.",
       ],
     },
@@ -336,7 +336,7 @@ export const suburbs: Suburb[] = [
       reasons: [
         "Bulimba is expensive, but owner-occupier demand and scarcity continue to underpin pricing discipline.",
         "It remains one of Brisbane's best suburbs for polished village living close to the river.",
-        "Families get a strong mix of parks, cafés, schools, and a slower-paced residential feel.",
+        "Families get a strong mix of parks, cafes, schools, and a slower-paced residential feel.",
       ],
     },
     investScores: {
@@ -421,7 +421,7 @@ export const suburbs: Suburb[] = [
     name: "Coorparoo",
     region: "South",
     shortDescription:
-      "A polished southside favourite with strong café amenity, established housing, and quick CBD access by bus and rail.",
+      "A polished southside favourite with strong cafe amenity, established housing, and quick CBD access by bus and rail.",
     rentScores: {
       affordability: 7.9,
       rentToValue: 7.7,
@@ -438,7 +438,7 @@ export const suburbs: Suburb[] = [
       familyLiveability: 8.2,
       reasons: [
         "The suburb still sits below true prestige territory while offering an established inner-south lifestyle.",
-        "Retail, cafés, and transport make it easy to live in without needing to over-stretch.",
+        "Retail, cafes, and transport make it easy to live in without needing to over-stretch.",
         "Families benefit from school options, parks, and a housing mix that is broader than tighter inner-east pockets.",
       ],
     },
