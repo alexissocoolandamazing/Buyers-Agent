@@ -4,11 +4,16 @@ interface ScoreRowProps {
   reason: string;
 }
 
+function getCompactReason(reason: string) {
+  const match = reason.match(/[^.]+(?:\.)?/);
+  return match?.[0]?.trim() ?? reason;
+}
+
 export function ScoreRow({ label, score, reason }: ScoreRowProps) {
   const progressWidth = `${Math.max(8, Math.min(100, score * 10))}%`;
 
   return (
-    <div className="space-y-3 rounded-[1.2rem] border border-[rgba(17,32,51,0.08)] bg-white/78 p-4">
+    <div className="space-y-2.5 rounded-[1.1rem] border border-[rgba(17,32,51,0.08)] bg-white/78 p-3.5">
       <div className="flex items-start justify-between gap-4">
         <span className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-neutral-600">
           {label}
@@ -23,7 +28,7 @@ export function ScoreRow({ label, score, reason }: ScoreRowProps) {
         />
       </div>
 
-      <p className="text-[0.95rem] leading-7 text-neutral-600">{reason}</p>
+      <p className="text-[0.9rem] leading-6 text-neutral-600">{getCompactReason(reason)}</p>
     </div>
   );
 }

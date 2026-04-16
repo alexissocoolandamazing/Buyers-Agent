@@ -11,9 +11,9 @@ export default function BuyPage() {
   return (
     <PropertyExplorer
       intent="buy"
-      title="Buy with a stronger brief."
-      description="See which Brisbane suburbs balance purchase value, liveability, and family practicality most convincingly."
-      budgetLabel="Max purchase budget"
+      title="Buy with a clearer brief."
+      description="Start with the full Brisbane shortlist, then apply price and region filters when you want a narrower buying view."
+      budgetLabel="Purchase budget"
     />
   );
 }

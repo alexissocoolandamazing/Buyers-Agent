@@ -10,7 +10,7 @@ export function SummaryParagraph({ children, className }: SummaryParagraphProps)
   return (
     <blockquote
       className={cn(
-        "rounded-[1.35rem] border border-brand-blue/10 bg-[linear-gradient(180deg,rgba(29,95,168,0.07),rgba(29,95,168,0.03))] p-5 text-[0.96rem] leading-8 text-neutral-700",
+        "rounded-[1.2rem] border border-brand-blue/10 bg-[linear-gradient(180deg,rgba(29,95,168,0.06),rgba(29,95,168,0.02))] p-4 text-[0.94rem] leading-7 text-neutral-700",
         className
       )}
     >
