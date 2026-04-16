@@ -28,7 +28,7 @@ type CTAButtonActionProps = CTAButtonBaseProps &
 type CTAButtonProps = CTAButtonLinkProps | CTAButtonActionProps;
 
 const baseClassName =
-  "inline-flex items-center justify-center rounded-2xl text-sm font-semibold tracking-tight transition duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+  "inline-flex items-center justify-center rounded-2xl text-sm font-semibold tracking-tight transition duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50";
 
 const variantClassNames: Record<CTAButtonVariant, Record<CTAButtonTone, string>> = {
   primary: {

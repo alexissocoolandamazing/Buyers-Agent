@@ -15,14 +15,14 @@ export default function InvestPage() {
       <PropertyExplorer
         intent="invest"
         title="Invest with cleaner logic."
-        description="Shortlist Brisbane suburbs through the lenses that matter most to investors: yield, entry price, and demand."
-        budgetLabel="Max entry budget"
+        description="Open on the full shortlist, then apply an entry budget and region when you want a more targeted investor view."
+        budgetLabel="Entry budget"
       />
 
       <PageWrapper className="pb-20 md:pb-28">
         <DisclaimerCard
-          heading="This is a recommendation engine, not financial advice."
-          body="These rankings use mock suburb data and transparent scoring logic to help you compare trade-offs faster. They do not account for your personal circumstances, financing position, tax settings, or asset selection details."
+          heading="This is a ranking tool, not financial advice."
+          body="The current rankings use mock suburb data and transparent scoring to compare trade-offs quickly. They do not reflect your personal finances, tax position, or asset selection."
           linkHref="/methodology"
           linkLabel="Read the methodology."
         />

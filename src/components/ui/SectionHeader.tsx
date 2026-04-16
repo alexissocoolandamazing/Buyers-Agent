@@ -22,7 +22,7 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        "space-y-5",
+        "space-y-4",
         align === "center" && "mx-auto text-center",
         align === "center" && (size === "lg" ? "max-w-4xl" : "max-w-3xl"),
         className
@@ -34,11 +34,11 @@ export function SectionHeader({
         </p>
       ) : null}
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         <h2
           className={cn(
             "font-semibold tracking-tight",
-            size === "lg" ? "text-3xl sm:text-4xl lg:text-[3.25rem]" : "text-2xl sm:text-3xl lg:text-[2.5rem]",
+            size === "lg" ? "text-3xl sm:text-4xl lg:text-[3.05rem]" : "text-2xl sm:text-3xl lg:text-[2.35rem]",
             tone === "inverse" ? "text-white" : "text-brand-navy"
           )}
         >
@@ -47,7 +47,8 @@ export function SectionHeader({
         {description ? (
           <p
             className={cn(
-              "text-[1rem] leading-8 sm:text-[1.04rem]",
+              "max-w-2xl text-[0.98rem] leading-7 sm:text-[1rem]",
+              align === "center" && "mx-auto",
               tone === "inverse" ? "text-white/66" : "text-neutral-700"
             )}
           >

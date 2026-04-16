@@ -22,25 +22,37 @@ export function TrustBlock({ items, tone = "default" }: TrustBlockProps) {
             key={item.title}
             className={
               tone === "inverse"
-                ? "h-full rounded-[1.6rem] border border-white/10 bg-white/[0.05] p-6 sm:p-7"
-                : "surface-panel-soft h-full p-6 sm:p-7"
+                ? "h-full rounded-[1.45rem] border border-white/10 bg-white/[0.04] p-5 sm:p-6"
+                : "surface-panel-soft h-full p-5 sm:p-6"
             }
           >
-            <div className="space-y-5">
+            <div className="space-y-4">
               <div
                 className={
                   tone === "inverse"
-                    ? "inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08]"
-                    : "inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-blue/12 bg-brand-blue/[0.08]"
+                    ? "inline-flex h-10 w-10 items-center justify-center rounded-[1rem] border border-white/10 bg-white/[0.08]"
+                    : "inline-flex h-10 w-10 items-center justify-center rounded-[1rem] border border-brand-blue/12 bg-brand-blue/[0.08]"
                 }
               >
-                <Icon className={tone === "inverse" ? "h-5 w-5 text-white" : "h-5 w-5 text-brand-navy"} />
+                <Icon className={tone === "inverse" ? "h-4 w-4 text-white" : "h-4 w-4 text-brand-navy"} />
               </div>
-              <div className="space-y-3">
-                <h3 className={tone === "inverse" ? "text-xl font-semibold tracking-tight text-white" : "text-xl font-semibold tracking-tight text-brand-navy"}>
+              <div className="space-y-2.5">
+                <h3
+                  className={
+                    tone === "inverse"
+                      ? "text-lg font-semibold tracking-tight text-white"
+                      : "text-lg font-semibold tracking-tight text-brand-navy"
+                  }
+                >
                   {item.title}
                 </h3>
-                <p className={tone === "inverse" ? "text-[0.98rem] leading-8 text-white/66" : "text-[0.98rem] leading-8 text-neutral-700"}>
+                <p
+                  className={
+                    tone === "inverse"
+                      ? "text-[0.95rem] leading-7 text-white/66"
+                      : "text-[0.95rem] leading-7 text-neutral-700"
+                  }
+                >
                   {item.body}
                 </p>
               </div>

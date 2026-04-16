@@ -481,23 +481,29 @@ export const regionOptions: Array<Region | "All Regions"> = [
 
 export const budgetOptionsByIntent: Record<Intent, BudgetOption[]> = {
   rent: [
-    { label: "$300-$400", value: "up-to-400", maximum: 400 },
-    { label: "$400-$550", value: "up-to-550", maximum: 550 },
-    { label: "$550-$700", value: "up-to-700", maximum: 700 },
-    { label: "$700+", value: "all-rent", maximum: null },
+    { label: "All weekly budgets", value: "all-rent", maximum: null },
+    { label: "Up to $400", value: "up-to-400", maximum: 400 },
+    { label: "Up to $550", value: "up-to-550", maximum: 550 },
+    { label: "Up to $700", value: "up-to-700", maximum: 700 },
   ],
   buy: [
-    { label: "$700k-$900k", value: "up-to-900k", maximum: 900_000 },
-    { label: "$900k-$1.2m", value: "up-to-1200k", maximum: 1_200_000 },
-    { label: "$1.2m-$1.5m", value: "up-to-1500k", maximum: 1_500_000 },
-    { label: "$1.5m+", value: "all-buy", maximum: null },
+    { label: "All purchase budgets", value: "all-buy", maximum: null },
+    { label: "Up to $900k", value: "up-to-900k", maximum: 900_000 },
+    { label: "Up to $1.2m", value: "up-to-1200k", maximum: 1_200_000 },
+    { label: "Up to $1.5m", value: "up-to-1500k", maximum: 1_500_000 },
   ],
   invest: [
-    { label: "$600k-$800k", value: "up-to-800k", maximum: 800_000 },
-    { label: "$800k-$1.0m", value: "up-to-1000k", maximum: 1_000_000 },
-    { label: "$1.0m-$1.3m", value: "up-to-1300k", maximum: 1_300_000 },
-    { label: "$1.3m+", value: "all-invest", maximum: null },
+    { label: "All entry budgets", value: "all-invest", maximum: null },
+    { label: "Up to $800k", value: "up-to-800k", maximum: 800_000 },
+    { label: "Up to $1.0m", value: "up-to-1000k", maximum: 1_000_000 },
+    { label: "Up to $1.3m", value: "up-to-1300k", maximum: 1_300_000 },
   ],
+};
+
+export const defaultBudgetValueByIntent: Record<Intent, string> = {
+  rent: "all-rent",
+  buy: "all-buy",
+  invest: "all-invest",
 };
 
 const scoreWeights: Record<Intent, [number, number, number]> = {
@@ -621,7 +627,7 @@ export function getFilteredSuburbs(
 ) {
   const budget =
     budgetOptionsByIntent[intent].find((option) => option.value === budgetValue) ??
-    budgetOptionsByIntent[intent].at(-1);
+    budgetOptionsByIntent[intent].find((option) => option.maximum === null);
 
   return suburbs
     .filter((suburb) => region === "All Regions" || suburb.region === region)

@@ -11,9 +11,9 @@ export default function RentPage() {
   return (
     <PropertyExplorer
       intent="rent"
-      title="Rent with more clarity."
-      description="Filter Brisbane suburbs by region and weekly budget, then compare the trade-offs in plain English."
-      budgetLabel="Max weekly budget"
+      title="Rent with clarity."
+      description="Scan Brisbane suburbs in a broad default view, then apply a weekly budget and region when you want a tighter shortlist."
+      budgetLabel="Weekly budget"
     />
   );
 }
