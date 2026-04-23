@@ -59,32 +59,29 @@ export function SuburbCard({
       <motion.article
         whileHover={{ y: -3 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className="surface-panel-soft flex h-full flex-col p-5 sm:p-6"
+        className="surface-panel-soft flex h-full flex-col p-5"
       >
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
             {editorialLabel ? <TagBadge label={editorialLabel} tone="neutral" /> : null}
             <TagBadge label={suburb.region} tone="region" />
           </div>
 
-          <div className="space-y-2.5">
-            <h3 className="text-[1.35rem] font-semibold tracking-tight text-brand-navy">{suburb.name}</h3>
-            <p className="text-[0.94rem] leading-7 text-neutral-700">{suburb.shortDescription}</p>
-          </div>
+          <h3 className="text-[1.25rem] font-semibold tracking-tight text-brand-navy">{suburb.name}</h3>
 
           {standoutLabel && standoutValue ? (
-            <div className="rounded-[1.1rem] border border-[rgba(17,32,51,0.08)] bg-white/80 px-4 py-3.5">
-              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-neutral-600">
+            <div className="rounded-xl border border-[rgba(17,32,51,0.08)] bg-white/80 px-3.5 py-3">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-neutral-500">
                 {standoutLabel}
               </p>
-              <p className="mt-2 font-[var(--font-display)] text-[1.55rem] font-semibold tracking-tight text-brand-navy">
+              <p className="mt-1.5 font-[var(--font-display)] text-[1.4rem] font-semibold tracking-tight text-brand-navy">
                 {standoutValue}
               </p>
             </div>
           ) : null}
         </div>
 
-        <div className="mt-auto pt-5">
+        <div className="mt-auto pt-4">
           <Link
             href={editorialHref ?? "/"}
             className="inline-flex items-center gap-2 text-sm font-semibold tracking-tight text-brand-blue transition hover:text-brand-navy"
@@ -110,21 +107,18 @@ export function SuburbCard({
       transition={{ duration: 0.2, ease: "easeOut" }}
       className="surface-panel-soft overflow-hidden p-5 sm:p-6"
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-4">
             {rank ? <RankIndicator rank={rank} /> : null}
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex flex-wrap gap-2">
                 <TagBadge label={suburb.region} tone="region" />
                 {mode === "rent" && suburb.tags.rent ? <TagBadge label={suburb.tags.rent} tone="rent" /> : null}
                 {mode === "buy" && suburb.tags.buy ? <TagBadge label={suburb.tags.buy} tone="blue" /> : null}
               </div>
-              <div className="space-y-2">
-                <h3 className="text-[1.55rem] font-semibold tracking-tight text-brand-navy">{suburb.name}</h3>
-                <p className="max-w-3xl text-[0.95rem] leading-7 text-neutral-700">{suburb.shortDescription}</p>
-              </div>
+              <h3 className="text-[1.4rem] font-semibold tracking-tight text-brand-navy">{suburb.name}</h3>
             </div>
           </div>
 
@@ -133,52 +127,54 @@ export function SuburbCard({
           ) : null}
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-2.5 sm:grid-cols-3">
           {statItems.map((item) => (
-            <div key={item.label} className="rounded-[1.05rem] border border-[rgba(17,32,51,0.08)] bg-white/80 px-4 py-3.5">
-              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-neutral-600">{item.label}</p>
-              <p className="mt-2 font-[var(--font-display)] text-[1.35rem] font-semibold tracking-tight text-brand-navy">
+            <div key={item.label} className="rounded-xl border border-[rgba(17,32,51,0.08)] bg-white/80 px-3.5 py-3">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-neutral-500">{item.label}</p>
+              <p className="mt-1.5 font-[var(--font-display)] text-[1.25rem] font-semibold tracking-tight text-brand-navy">
                 {item.value}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-3">
-          {scoreRows.map((scoreRow) => (
-            <ScoreRow key={scoreRow.label} label={scoreRow.label} score={scoreRow.score} reason={scoreRow.reason} />
-          ))}
-        </div>
-
         {isExpanded ? (
-          <div className="grid gap-4 rounded-[1.35rem] border border-[rgba(17,32,51,0.08)] bg-white/76 p-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-            <div className="space-y-3">
-              <p className="field-label">Profile view</p>
-              <SummaryParagraph>{suburb.verdict}</SummaryParagraph>
+          <>
+            <div className="grid gap-3 lg:grid-cols-3">
+              {scoreRows.map((scoreRow) => (
+                <ScoreRow key={scoreRow.label} label={scoreRow.label} score={scoreRow.score} reason={scoreRow.reason} />
+              ))}
             </div>
 
-            <div className="grid gap-2 sm:grid-cols-2">
-              {localFactorIcons.map((item) => {
-                const Icon = item.icon;
-                const label = suburb.localFactors[item.key];
+            <div className="grid gap-4 rounded-[1.2rem] border border-[rgba(17,32,51,0.08)] bg-white/76 p-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+              <div className="space-y-2">
+                <p className="field-label">Profile</p>
+                <SummaryParagraph>{suburb.verdict}</SummaryParagraph>
+              </div>
 
-                return (
-                  <div
-                    key={item.key}
-                    className="flex items-center gap-3 rounded-[1rem] border border-[rgba(17,32,51,0.08)] bg-white/86 px-3.5 py-3"
-                  >
-                    <Icon className="h-4 w-4 shrink-0 text-brand-navy" />
-                    <span className="text-sm leading-6 text-neutral-700">{label}</span>
-                  </div>
-                );
-              })}
+              <div className="grid gap-2 sm:grid-cols-2">
+                {localFactorIcons.map((item) => {
+                  const Icon = item.icon;
+                  const label = suburb.localFactors[item.key];
+
+                  return (
+                    <div
+                      key={item.key}
+                      className="flex items-center gap-3 rounded-[0.85rem] border border-[rgba(17,32,51,0.08)] bg-white/86 px-3 py-2.5"
+                    >
+                      <Icon className="h-4 w-4 shrink-0 text-brand-navy" />
+                      <span className="text-sm leading-5 text-neutral-700">{label}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          </>
         ) : null}
 
         <div
           className={cn(
-            "flex flex-col gap-3 border-t border-[rgba(17,32,51,0.08)] pt-5 sm:flex-row sm:items-center sm:justify-between",
+            "flex flex-col gap-3 border-t border-[rgba(17,32,51,0.08)] pt-4 sm:flex-row sm:items-center sm:justify-between",
             mode !== "rent" && "sm:justify-end"
           )}
         >
@@ -198,7 +194,7 @@ export function SuburbCard({
               >
                 <Check className="h-3.5 w-3.5" />
               </span>
-              {compareSelected ? "Added to compare" : "Add to compare"}
+              {compareSelected ? "Added" : "Compare"}
             </button>
           ) : null}
 

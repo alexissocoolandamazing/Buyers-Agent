@@ -131,11 +131,11 @@ p {
   }
 
   .section-space {
-    padding-block: clamp(4.75rem, 8vw, 7.75rem);
+    padding-block: clamp(5.5rem, 10vw, 9rem);
   }
 
   .section-space-tight {
-    padding-block: clamp(3rem, 5.5vw, 4.75rem);
+    padding-block: clamp(3.5rem, 6vw, 5.5rem);
   }
 
   .surface-panel {

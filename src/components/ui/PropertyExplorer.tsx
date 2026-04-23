@@ -27,21 +27,9 @@ interface PropertyExplorerProps {
 const RESULTS_PER_PAGE = 5;
 
 const intentEyebrows: Record<Intent, string> = {
-  rent: "Brisbane rental intelligence",
-  buy: "Brisbane buying intelligence",
-  invest: "Brisbane investment intelligence",
-};
-
-const heroBadgeLabels: Record<Intent, string> = {
-  rent: "Rental intelligence",
-  buy: "Buying intelligence",
-  invest: "Investment intelligence",
-};
-
-const filterTitles: Record<Intent, string> = {
-  rent: "Refine the shortlist",
-  buy: "Refine the shortlist",
-  invest: "Refine the shortlist",
+  rent: "Rental rankings",
+  buy: "Buying rankings",
+  invest: "Investment rankings",
 };
 
 function getBudgetOptionLabel(intent: Intent, value: string) {
@@ -72,11 +60,9 @@ export function PropertyExplorer({
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const pageStart = (safeCurrentPage - 1) * RESULTS_PER_PAGE;
   const pageResults = results.slice(pageStart, pageStart + RESULTS_PER_PAGE);
-  const topResult = results[0];
   const hasPendingChanges =
     draftRegion !== appliedRegion || draftBudgetValue !== appliedBudgetValue;
   const appliedBudgetLabel = getBudgetOptionLabel(intent, appliedBudgetValue);
-  const draftBudgetLabel = getBudgetOptionLabel(intent, draftBudgetValue);
 
   const comparedSuburbs = compareIds
     .map((id) => suburbs.find((suburb) => suburb.id === id))
@@ -149,43 +135,6 @@ export function PropertyExplorer({
     resultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function getLeadSummary() {
-    if (!topResult) {
-      return "No suburb matches the current brief right now.";
-    }
-
-    if (intent === "rent") {
-      return `${results.length} suburbs ready. ${topResult.name} leads at ${formatRent(topResult.weeklyRent)}.`;
-    }
-
-    if (intent === "buy") {
-      return `${results.length} suburbs ready. ${topResult.name} leads at ${formatMoneyShort(topResult.medianPrice)}.`;
-    }
-
-    return `${results.length} suburbs ready. ${topResult.name} leads at ${formatPercent(topResult.grossYield)} yield.`;
-  }
-
-  const summaryItems = [
-    { label: "Region", value: appliedRegion },
-    { label: budgetLabel, value: appliedBudgetLabel },
-    { label: "Results", value: `${results.length} suburbs` },
-  ];
-
-  const pendingSummaryItems = hasPendingChanges
-    ? [
-        { label: "Region", value: draftRegion },
-        { label: budgetLabel, value: draftBudgetLabel },
-      ]
-    : undefined;
-
-  const filterDescription = hasPendingChanges
-    ? "Adjust the filters here, then apply the new shortlist when you are ready."
-    : "The full shortlist is already loaded below. Use the controls only when you want to narrow it.";
-
-  const helperText = hasPendingChanges
-    ? "Apply to refresh the results and reset to page 1."
-    : "Results are already visible below with 5 suburbs per page.";
-
   const outerSpacingClassName = cn(
     "pt-1 sm:pt-2 lg:pt-3",
     comparedSuburbs.length >= 2
@@ -197,22 +146,21 @@ export function PropertyExplorer({
 
   return (
     <>
-      <section className="relative overflow-hidden px-0 pb-7 pt-5 sm:pb-8 sm:pt-7 lg:pb-10 lg:pt-8">
+      {/* Hero + Filter */}
+      <section className="relative overflow-hidden px-0 pb-0 pt-6 sm:pt-8 lg:pt-10">
         <div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_top_left,rgba(29,95,168,0.1),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(187,154,103,0.08),transparent_28%)]" />
 
         <PageWrapper animate={false}>
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(22rem,0.84fr)] xl:items-start xl:gap-8">
+          <div className="space-y-6">
             <motion.div
               initial={reduceMotion ? false : { opacity: 0, y: 16 }}
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
               <PageHero
-                badgeLabel={heroBadgeLabels[intent]}
                 eyebrow={intentEyebrows[intent]}
                 title={title}
                 description={description}
-                summary={getLeadSummary()}
               />
             </motion.div>
 
@@ -222,16 +170,12 @@ export function PropertyExplorer({
               transition={{ duration: 0.45, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
             >
               <FilterPanel
-                title={filterTitles[intent]}
-                description={filterDescription}
                 region={draftRegion}
                 budgetValue={draftBudgetValue}
                 budgetLabel={budgetLabel}
                 budgetOptions={budgetOptionsByIntent[intent]}
-                summaryItems={summaryItems}
-                pendingSummaryItems={pendingSummaryItems}
                 hasPendingChanges={hasPendingChanges}
-                helperText={helperText}
+                resultCount={results.length}
                 onRegionChange={setDraftRegion}
                 onBudgetChange={setDraftBudgetValue}
                 onApply={handleApply}
@@ -242,6 +186,7 @@ export function PropertyExplorer({
         </PageWrapper>
       </section>
 
+      {/* Results */}
       <PageWrapper animate={false} className={outerSpacingClassName}>
         <div className="space-y-5">
           {compareError ? (

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { CTAButton } from "@/components/ui/CTAButton";
@@ -59,51 +60,24 @@ function getIntentBadge(suburb: Suburb, intent: Intent) {
 function getMetrics(suburb: Suburb, intent: Intent): MetricCard[] {
   if (intent === "rent") {
     return [
-      {
-        label: "Median rent",
-        value: formatRent(suburb.weeklyRent),
-      },
-      {
-        label: "Affordability",
-        value: `${suburb.rentScores.affordability.toFixed(1)} / 10`,
-      },
-      {
-        label: "Renter fit",
-        value: `${((suburb.rentScores.amenity + suburb.rentScores.rentToValue) / 2).toFixed(1)} / 10`,
-      },
+      { label: "Median rent", value: formatRent(suburb.weeklyRent) },
+      { label: "Affordability", value: `${suburb.rentScores.affordability.toFixed(1)}` },
+      { label: "Renter fit", value: `${((suburb.rentScores.amenity + suburb.rentScores.rentToValue) / 2).toFixed(1)}` },
     ];
   }
 
   if (intent === "buy") {
     return [
-      {
-        label: "Purchase guide",
-        value: formatMoneyShort(suburb.medianPrice),
-      },
-      {
-        label: "Buyer fit",
-        value: `${getCompositeScore(suburb, "buy").toFixed(1)} / 10`,
-      },
-      {
-        label: "Value snapshot",
-        value: `${suburb.buyScores.purchaseValue.toFixed(1)} / 10`,
-      },
+      { label: "Price guide", value: formatMoneyShort(suburb.medianPrice) },
+      { label: "Buyer fit", value: `${getCompositeScore(suburb, "buy").toFixed(1)}` },
+      { label: "Value", value: `${suburb.buyScores.purchaseValue.toFixed(1)}` },
     ];
   }
 
   return [
-    {
-      label: "Gross yield",
-      value: formatPercent(suburb.grossYield),
-    },
-    {
-      label: "Value vs growth",
-      value: `${((suburb.investScores.entryPrice + suburb.investScores.demand) / 2).toFixed(1)} / 10`,
-    },
-    {
-      label: "Investor fit",
-      value: `${getCompositeScore(suburb, "invest").toFixed(1)} / 10`,
-    },
+    { label: "Gross yield", value: formatPercent(suburb.grossYield) },
+    { label: "Value vs growth", value: `${((suburb.investScores.entryPrice + suburb.investScores.demand) / 2).toFixed(1)}` },
+    { label: "Investor fit", value: `${getCompositeScore(suburb, "invest").toFixed(1)}` },
   ];
 }
 
@@ -130,52 +104,41 @@ export function ResultCard({
   const detailPanelId = `${suburb.id}-${intent}-details`;
   const metrics = getMetrics(suburb, intent);
   const scoreRows = getScoreRows(suburb, intent);
-  const overallScore = getCompositeScore(suburb, intent);
   const intentBadge = getIntentBadge(suburb, intent);
 
   return (
     <motion.article
-      whileHover={{ y: -3 }}
+      whileHover={{ y: -2 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       className="surface-panel-soft overflow-hidden p-5 sm:p-6"
     >
-      <div className="space-y-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex items-start gap-4">
+      <div className="space-y-4">
+        {/* Header: rank + name + badges + metrics */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-start gap-3.5">
             <RankIndicator rank={rank} />
 
-            <div className="space-y-3.5">
-              <div className="flex flex-wrap gap-2">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-[1.35rem] font-semibold tracking-tight text-brand-navy sm:text-[1.5rem]">
+                  {suburb.name}
+                </h3>
                 <TagBadge label={suburb.region} tone="region" />
                 {intentBadge ? <TagBadge label={intentBadge.label} tone={intentBadge.tone} /> : null}
               </div>
-
-              <div className="space-y-2.5">
-                <div className="flex flex-wrap items-center gap-3">
-                  <h3 className="text-[1.45rem] font-semibold tracking-tight text-brand-navy sm:text-[1.6rem]">
-                    {suburb.name}
-                  </h3>
-                  <span className="inline-flex items-center rounded-full border border-brand-blue/12 bg-brand-blue/[0.08] px-3 py-1 text-sm font-semibold text-brand-blue">
-                    {overallScore.toFixed(1)} / 10
-                  </span>
-                </div>
-
-                <p className="max-w-3xl text-[0.96rem] leading-7 text-neutral-700">
-                  {suburb.shortDescription}
-                </p>
-                <p className="max-w-3xl text-sm leading-6 text-neutral-600">{getCardReason(suburb, intent)}</p>
-              </div>
+              <p className="max-w-2xl text-sm leading-6 text-neutral-600">{getCardReason(suburb, intent)}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:min-w-[26rem]">
+          {/* Compact metrics */}
+          <div className="flex flex-wrap gap-2 sm:shrink-0">
             {metrics.map((metric) => (
               <div
                 key={metric.label}
-                className="rounded-[1.1rem] border border-[rgba(17,32,51,0.08)] bg-white/82 px-4 py-3.5"
+                className="rounded-xl border border-[rgba(17,32,51,0.08)] bg-white/82 px-3 py-2"
               >
-                <p className="field-label">{metric.label}</p>
-                <p className="mt-2 text-base font-semibold tracking-tight text-brand-navy sm:text-lg">
+                <p className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-neutral-500">{metric.label}</p>
+                <p className="mt-0.5 text-sm font-semibold tracking-tight text-brand-navy">
                   {metric.value}
                 </p>
               </div>
@@ -183,24 +146,27 @@ export function ResultCard({
           </div>
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-3">
-          {scoreRows.map((scoreRow) => (
-            <ScoreRow
-              key={scoreRow.label}
-              label={scoreRow.label}
-              score={scoreRow.score}
-              reason={scoreRow.reason}
-            />
-          ))}
-        </div>
-
+        {/* Expandable detail section */}
         {detailsOpen ? (
           <div
             id={detailPanelId}
-            className="rounded-[1.3rem] border border-[rgba(17,32,51,0.08)] bg-white/82 p-4 sm:p-5"
+            className="space-y-4 border-t border-[rgba(17,32,51,0.08)] pt-4"
           >
-            <div className="space-y-3">
-              <div className="space-y-3">
+            {/* Score rows */}
+            <div className="grid gap-3 lg:grid-cols-3">
+              {scoreRows.map((scoreRow) => (
+                <ScoreRow
+                  key={scoreRow.label}
+                  label={scoreRow.label}
+                  score={scoreRow.score}
+                  reason={scoreRow.reason}
+                />
+              ))}
+            </div>
+
+            {/* Full note */}
+            <div className="rounded-[1.2rem] border border-[rgba(17,32,51,0.08)] bg-white/82 p-4 sm:p-5">
+              <div className="space-y-2">
                 <p className="field-label">Full note</p>
                 <SummaryParagraph>{suburb.verdict}</SummaryParagraph>
               </div>
@@ -208,8 +174,9 @@ export function ResultCard({
           </div>
         ) : null}
 
-        <div className="flex flex-col gap-3 border-t border-[rgba(17,32,51,0.08)] pt-4 sm:flex-row sm:items-center sm:justify-end">
-          <div className="flex flex-wrap gap-3">
+        {/* Footer actions */}
+        <div className="flex flex-col gap-3 border-t border-[rgba(17,32,51,0.08)] pt-3.5 sm:flex-row sm:items-center sm:justify-end">
+          <div className="flex flex-wrap gap-2.5">
             {onCompareToggle ? (
               <CTAButton
                 type="button"
@@ -222,7 +189,7 @@ export function ResultCard({
                 aria-pressed={compareSelected}
                 onClick={() => onCompareToggle(suburb.id)}
               >
-                {compareSelected ? "Remove from compare" : "Add to compare"}
+                {compareSelected ? "Remove compare" : "Compare"}
               </CTAButton>
             ) : null}
 
@@ -230,12 +197,13 @@ export function ResultCard({
               type="button"
               variant={detailsOpen ? "secondary" : "primary"}
               size="sm"
-              className="rounded-full"
+              className="rounded-full gap-1.5"
               aria-controls={detailPanelId}
               aria-expanded={detailsOpen}
               onClick={() => setDetailsOpen((current) => !current)}
             >
-              {detailsOpen ? "Hide full note" : "View full note"}
+              {detailsOpen ? "Hide details" : "View details"}
+              {detailsOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
             </CTAButton>
           </div>
         </div>

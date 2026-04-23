@@ -6,7 +6,7 @@ import { PropertyExplorer } from "@/components/ui/PropertyExplorer";
 export const metadata: Metadata = {
   title: "Invest",
   description:
-    "Explore Brisbane investment suburbs with a premium shortlist, default full-region results, and clearer yield and demand signals.",
+    "Explore Brisbane investment suburbs with transparent rankings, yield signals, and demand indicators.",
 };
 
 export default function InvestPage() {
@@ -14,15 +14,15 @@ export default function InvestPage() {
     <>
       <PropertyExplorer
         intent="invest"
-        title="Invest with cleaner signals."
-        description="Load straight into the full Brisbane investment shortlist, then tighten the lens with region and entry budget when you want a more targeted investor read."
+        title="Brisbane investment rankings"
+        description="All suburbs ranked for investors. Filter by region and entry budget to refine the shortlist."
         budgetLabel="Entry budget"
       />
 
       <PageWrapper className="pb-20 md:pb-28">
         <DisclaimerCard
-          heading="This is a ranking tool, not financial advice."
-          body="The current rankings use mock suburb data and transparent scoring to compare trade-offs quickly. They do not reflect your personal finances, tax position, or asset selection."
+          heading="Not financial advice."
+          body="Rankings use mock data and transparent scoring to compare trade-offs. They do not reflect your finances or tax position."
           linkHref="/methodology"
           linkLabel="Read the methodology."
         />

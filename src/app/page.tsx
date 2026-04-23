@@ -13,35 +13,35 @@ const steps = [
   {
     number: "01",
     label: "Choose a pathway",
-    description: "Start with rent, buy, or invest so the shortlist matches the decision in front of you.",
+    description: "Start with rent, buy, or invest to match your goal.",
   },
   {
     number: "02",
-    label: "Apply the brief",
-    description: "Refine region and budget, then apply the filters when you are ready to narrow the view.",
+    label: "Set your brief",
+    description: "Filter by region and budget, then apply.",
   },
   {
     number: "03",
     label: "Read the signal",
-    description: "Scan the ranking, review the score reasons, and open a profile only when you need more detail.",
+    description: "Scan rankings and scores, open profiles when needed.",
   },
 ];
 
 const trustItems = [
   {
     icon: Database,
-    title: "Structured suburb data",
-    body: "The demo uses typed suburb data so every ranking, filter, and summary behaves like a real product flow.",
+    title: "Structured data",
+    body: "Typed suburb data powers every ranking, filter, and summary.",
   },
   {
     icon: BarChart3,
-    title: "Visible scoring logic",
-    body: "Each pathway keeps the weighted signals readable, so users can see why a suburb rises or falls.",
+    title: "Visible scoring",
+    body: "Weighted signals are readable — see why suburbs rise or fall.",
   },
   {
     icon: MessageSquareText,
     title: "Plain-English rationale",
-    body: "Short score reasons and suburb profiles keep the experience closer to advice than dashboard theatre.",
+    body: "Score reasons keep the experience closer to advice than noise.",
   },
 ];
 
@@ -57,8 +57,7 @@ export default function HomePage() {
           <div className="space-y-10">
             <SectionHeader
               eyebrow="Featured suburbs"
-              title="Top picks across rent, buy, and invest."
-              description="A quick read on the strongest current pathways in the demo dataset."
+              title="Top picks across each pathway."
             />
 
             <div className="grid gap-5 lg:grid-cols-3">
@@ -91,13 +90,12 @@ export default function HomePage() {
         </PageWrapper>
       </section>
 
-      <section className="section-space pt-0">
+      <section className="section-space">
         <PageWrapper>
           <div className="space-y-10">
             <SectionHeader
               eyebrow="How it works"
-              title="A simpler path from broad scan to shortlist."
-              description="The product is designed to feel complete on first load, then become more specific only when you ask it to."
+              title="From broad scan to shortlist in three steps."
             />
 
             <div className="grid gap-5 lg:grid-cols-3">
@@ -109,14 +107,13 @@ export default function HomePage() {
         </PageWrapper>
       </section>
 
-      <section className="section-space pt-0">
+      <section className="section-space">
         <PageWrapper>
           <div className="surface-panel-dark overflow-hidden p-6 text-white sm:p-8 lg:p-10">
             <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
               <SectionHeader
-                eyebrow="Trust and data"
-                title="Polished on the surface, transparent underneath."
-                description="SuburbIQ earns trust through readable methodology, visible score logic, and a dataset view that never feels hidden."
+                eyebrow="Trust & transparency"
+                title="Clear logic, readable scoring."
                 tone="inverse"
               />
               <TrustBlock items={trustItems} tone="inverse" />
@@ -125,7 +122,7 @@ export default function HomePage() {
         </PageWrapper>
       </section>
 
-      <section className="section-space pt-0">
+      <section className="section-space">
         <PageWrapper>
           <div className="surface-panel overflow-hidden p-6 sm:p-8 lg:p-10">
             <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-center">
@@ -135,7 +132,7 @@ export default function HomePage() {
                   Start broad. Narrow with confidence.
                 </h2>
                 <p className="max-w-2xl text-[0.98rem] leading-7 text-neutral-700">
-                  Open any pathway to see the full shortlist first, then apply filters when you want a tighter brief.
+                  Every pathway opens with the full shortlist. Apply filters when you want a tighter view.
                 </p>
               </div>
 

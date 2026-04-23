@@ -4,15 +4,15 @@ import { PropertyExplorer } from "@/components/ui/PropertyExplorer";
 export const metadata: Metadata = {
   title: "Rent",
   description:
-    "Explore Brisbane suburbs for renting with a premium shortlist, default full-region results, and clearer renter signals.",
+    "Explore Brisbane suburbs for renting with transparent rankings and renter-friendly signals.",
 };
 
 export default function RentPage() {
   return (
     <PropertyExplorer
       intent="rent"
-      title="Rent with a clearer shortlist."
-      description="Open on the full Brisbane rental landscape from the first load, then refine by weekly budget and region when you want a tighter renter-friendly view."
+      title="Brisbane rental rankings"
+      description="All suburbs ranked for renters. Filter by region and weekly budget to narrow the shortlist."
       budgetLabel="Weekly budget"
     />
   );
