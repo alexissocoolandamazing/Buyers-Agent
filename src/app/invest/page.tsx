@@ -4,25 +4,32 @@ import { DisclaimerCard } from "@/components/ui/DisclaimerCard";
 import { PropertyExplorer } from "@/components/ui/PropertyExplorer";
 
 export const metadata: Metadata = {
-  title: "Invest",
+  title: "Invest in Brisbane",
   description:
-    "Explore Brisbane investment suburbs with transparent rankings, yield signals, and demand indicators.",
+    "Compare Brisbane suburbs for investing with seeded yield, affordability, demand, growth proxy, and risk signals.",
 };
 
-export default function InvestPage() {
+export default async function InvestPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+
   return (
     <>
       <PropertyExplorer
         intent="invest"
-        title="Brisbane investment rankings"
-        description="All suburbs ranked for investors. Filter by region and entry budget to refine the shortlist."
+        title="Compare suburb-level investment signals before choosing where to research deeper."
+        description="Rank suburbs by entry budget, risk appetite, yield versus growth preference, affordability, transport, and seeded rental demand signals."
         budgetLabel="Entry budget"
+        initialParams={params}
       />
 
       <PageWrapper className="pb-20 md:pb-28">
         <DisclaimerCard
           heading="Not financial advice."
-          body="Rankings use mock data and transparent scoring to compare trade-offs. They do not reflect your finances or tax position."
+          body="Rankings use seeded MVP suburb profiles and transparent scoring to compare suburb-level trade-offs. They do not reflect your finances, tax position, borrowing capacity, or individual property risk."
           linkHref="/methodology"
           linkLabel="Read the methodology."
         />

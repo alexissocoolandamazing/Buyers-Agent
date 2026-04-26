@@ -10,7 +10,7 @@ function getCompactReason(reason: string) {
 }
 
 export function ScoreRow({ label, score, reason }: ScoreRowProps) {
-  const progressWidth = `${Math.max(8, Math.min(100, score * 10))}%`;
+  const progressWidth = `${Math.max(8, Math.min(100, score))}%`;
 
   return (
     <div className="space-y-2 rounded-[1rem] border border-[rgba(17,32,51,0.08)] bg-white/78 p-3">
@@ -18,7 +18,7 @@ export function ScoreRow({ label, score, reason }: ScoreRowProps) {
         <span className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-neutral-600">
           {label}
         </span>
-        <span className="font-mono text-sm font-semibold text-brand-navy">{score.toFixed(1)} / 10</span>
+        <span className="font-mono text-sm font-semibold text-brand-navy">{Math.round(score)} / 100</span>
       </div>
 
       <div className="h-1.5 overflow-hidden rounded-full bg-[rgba(29,95,168,0.08)]">

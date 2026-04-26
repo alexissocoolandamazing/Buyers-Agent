@@ -1,39 +1,137 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { startTransition, useState } from "react";
+import { startTransition, useMemo, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { ComparePanel } from "@/components/ui/ComparePanel";
 import { FilterPanel } from "@/components/ui/FilterPanel";
 import { PageHero } from "@/components/ui/PageHero";
 import { ResultsList } from "@/components/ui/ResultsList";
-import { formatMoneyShort, formatPercent, formatRent } from "@/lib/format";
 import {
-  budgetOptionsByIntent,
-  defaultBudgetValueByIntent,
-  getFilteredSuburbs,
-  suburbs,
-} from "@/lib/mockData";
-import type { Intent, Region } from "@/lib/types";
+  bedroomOptions,
+  brisbaneSuburbs,
+  budgetOptionsByPathway,
+  defaultPreferencesByPathway,
+  getBudgetLabel,
+  getOptionLabel,
+  getRecommendedSuburbs,
+  priorityOptionsByPathway,
+  propertyTypeOptions,
+  riskOptions,
+} from "@/lib/recommendations";
+import type {
+  BuyPropertyPreference,
+  InvestRiskPreference,
+  Pathway,
+  Priority,
+  RecommendationPreferences,
+  RegionPreference,
+  RentBedroomPreference,
+} from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface PropertyExplorerProps {
-  intent: Intent;
+  intent: Pathway;
   title: string;
   description: string;
   budgetLabel: string;
+  initialParams?: Record<string, string | string[] | undefined>;
 }
 
-const RESULTS_PER_PAGE = 5;
+interface ExplorerState {
+  region: RegionPreference;
+  budget: string;
+  priority: Priority;
+  secondary: string;
+}
 
-const intentEyebrows: Record<Intent, string> = {
-  rent: "Rental rankings",
-  buy: "Buying rankings",
-  invest: "Investment rankings",
+const RESULTS_PER_PAGE = 6;
+
+const intentEyebrows: Record<Pathway, string> = {
+  rent: "Rental recommendations",
+  buy: "Buyer recommendations",
+  invest: "Investor recommendations",
 };
 
-function getBudgetOptionLabel(intent: Intent, value: string) {
-  return budgetOptionsByIntent[intent].find((option) => option.value === value)?.label ?? "All budgets";
+function readParam(params: PropertyExplorerProps["initialParams"], key: string) {
+  const value = params?.[key];
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function optionValues(options: Array<{ value: string }>) {
+  return new Set(options.map((option) => option.value));
+}
+
+function getSecondaryConfig(pathway: Pathway) {
+  if (pathway === "rent") {
+    return {
+      key: "bedrooms",
+      label: "Bedrooms",
+      options: bedroomOptions,
+      defaultValue: defaultPreferencesByPathway.rent.bedrooms ?? "2-bed",
+    };
+  }
+
+  if (pathway === "buy") {
+    return {
+      key: "propertyType",
+      label: "Property type",
+      options: propertyTypeOptions,
+      defaultValue: defaultPreferencesByPathway.buy.propertyType ?? "flexible",
+    };
+  }
+
+  return {
+    key: "risk",
+    label: "Risk appetite",
+    options: riskOptions,
+    defaultValue: defaultPreferencesByPathway.invest.risk ?? "balanced",
+  };
+}
+
+function getInitialState(pathway: Pathway, params?: PropertyExplorerProps["initialParams"]): ExplorerState {
+  const defaults = defaultPreferencesByPathway[pathway];
+  const secondaryConfig = getSecondaryConfig(pathway);
+
+  const budget = readParam(params, "budget");
+  const region = readParam(params, "region");
+  const priority = readParam(params, "priority");
+  const secondary = readParam(params, secondaryConfig.key);
+
+  const budgetValues = optionValues(budgetOptionsByPathway[pathway]);
+  const regionValues = new Set(["Anywhere", "Inner North", "Inner South", "Inner East", "Inner West", "Middle Ring", "Outer North", "Outer South", "Outer East", "Outer West"]);
+  const priorityValues = optionValues(priorityOptionsByPathway[pathway]);
+  const secondaryValues = optionValues(secondaryConfig.options);
+
+  return {
+    region: region && regionValues.has(region) ? (region as RegionPreference) : defaults.region ?? "Anywhere",
+    budget: budget && budgetValues.has(budget) ? budget : defaults.budget ?? "any",
+    priority: priority && priorityValues.has(priority) ? (priority as Priority) : defaults.priority ?? "balanced",
+    secondary: secondary && secondaryValues.has(secondary) ? secondary : secondaryConfig.defaultValue,
+  };
+}
+
+function toPreferences(pathway: Pathway, state: ExplorerState): RecommendationPreferences {
+  const preferences: RecommendationPreferences = {
+    pathway,
+    region: state.region,
+    budget: state.budget,
+    priority: state.priority,
+  };
+
+  if (pathway === "rent") {
+    preferences.bedrooms = state.secondary as RentBedroomPreference;
+  }
+
+  if (pathway === "buy") {
+    preferences.propertyType = state.secondary as BuyPropertyPreference;
+  }
+
+  if (pathway === "invest") {
+    preferences.risk = state.secondary as InvestRiskPreference;
+  }
+
+  return preferences;
 }
 
 export function PropertyExplorer({
@@ -41,32 +139,37 @@ export function PropertyExplorer({
   title,
   description,
   budgetLabel,
+  initialParams,
 }: PropertyExplorerProps) {
+  const pathway = intent;
   const reduceMotion = useReducedMotion();
-  const defaultRegion: Region | "All Regions" = "All Regions";
-  const defaultBudget = defaultBudgetValueByIntent[intent];
+  const secondaryConfig = useMemo(() => getSecondaryConfig(pathway), [pathway]);
+  const initialState = useMemo(() => getInitialState(pathway, initialParams), [pathway, initialParams]);
 
-  const [draftRegion, setDraftRegion] = useState<Region | "All Regions">(defaultRegion);
-  const [draftBudgetValue, setDraftBudgetValue] = useState(defaultBudget);
-  const [appliedRegion, setAppliedRegion] = useState<Region | "All Regions">(defaultRegion);
-  const [appliedBudgetValue, setAppliedBudgetValue] = useState(defaultBudget);
+  const [draftState, setDraftState] = useState<ExplorerState>(initialState);
+  const [appliedState, setAppliedState] = useState<ExplorerState>(initialState);
   const [currentPage, setCurrentPage] = useState(1);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
   const [compareError, setCompareError] = useState<string | null>(null);
 
-  const results = getFilteredSuburbs(intent, appliedRegion, appliedBudgetValue);
+  const appliedPreferences = toPreferences(pathway, appliedState);
+  const results = getRecommendedSuburbs(appliedPreferences, { limit: brisbaneSuburbs.length });
   const totalPages = Math.max(1, Math.ceil(results.length / RESULTS_PER_PAGE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const pageStart = (safeCurrentPage - 1) * RESULTS_PER_PAGE;
   const pageResults = results.slice(pageStart, pageStart + RESULTS_PER_PAGE);
-  const hasPendingChanges =
-    draftRegion !== appliedRegion || draftBudgetValue !== appliedBudgetValue;
-  const appliedBudgetLabel = getBudgetOptionLabel(intent, appliedBudgetValue);
+  const hasPendingChanges = JSON.stringify(draftState) !== JSON.stringify(appliedState);
+  const appliedBudgetLabel = getBudgetLabel(pathway, appliedState.budget);
+  const appliedPriorityLabel = getOptionLabel(priorityOptionsByPathway[pathway], appliedState.priority);
 
   const comparedSuburbs = compareIds
-    .map((id) => suburbs.find((suburb) => suburb.id === id))
-    .filter((suburb): suburb is (typeof suburbs)[number] => Boolean(suburb));
+    .map((id) => brisbaneSuburbs.find((suburb) => suburb.id === id))
+    .filter((suburb): suburb is (typeof brisbaneSuburbs)[number] => Boolean(suburb));
+
+  function updateDraftState(partial: Partial<ExplorerState>) {
+    setDraftState((current) => ({ ...current, ...partial }));
+  }
 
   function clearCompareState() {
     setCompareIds([]);
@@ -76,8 +179,7 @@ export function PropertyExplorer({
 
   function handleApply() {
     startTransition(() => {
-      setAppliedRegion(draftRegion);
-      setAppliedBudgetValue(draftBudgetValue);
+      setAppliedState(draftState);
       setCurrentPage(1);
       clearCompareState();
     });
@@ -85,10 +187,9 @@ export function PropertyExplorer({
 
   function handleReset() {
     startTransition(() => {
-      setDraftRegion(defaultRegion);
-      setDraftBudgetValue(defaultBudget);
-      setAppliedRegion(defaultRegion);
-      setAppliedBudgetValue(defaultBudget);
+      const resetState = getInitialState(pathway);
+      setDraftState(resetState);
+      setAppliedState(resetState);
       setCurrentPage(1);
       clearCompareState();
     });
@@ -130,23 +231,20 @@ export function PropertyExplorer({
     }
 
     setCurrentPage(nextPage);
-
-    const resultsSection = document.getElementById("property-results");
-    resultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("property-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   const outerSpacingClassName = cn(
     "pt-1 sm:pt-2 lg:pt-3",
     comparedSuburbs.length >= 2
       ? compareOpen
-        ? "pb-[18rem] md:pb-[15rem]"
+        ? "pb-[20rem] md:pb-[17rem]"
         : "pb-[8.5rem] md:pb-[9.5rem]"
       : "pb-16 sm:pb-20 lg:pb-24"
   );
 
   return (
     <>
-      {/* Hero + Filter */}
       <section className="relative overflow-hidden px-0 pb-0 pt-6 sm:pt-8 lg:pt-10">
         <div className="absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_top_left,rgba(29,95,168,0.1),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(187,154,103,0.08),transparent_28%)]" />
 
@@ -157,11 +255,7 @@ export function PropertyExplorer({
               animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
-              <PageHero
-                eyebrow={intentEyebrows[intent]}
-                title={title}
-                description={description}
-              />
+              <PageHero eyebrow={intentEyebrows[pathway]} title={title} description={description} />
             </motion.div>
 
             <motion.div
@@ -170,14 +264,21 @@ export function PropertyExplorer({
               transition={{ duration: 0.45, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
             >
               <FilterPanel
-                region={draftRegion}
-                budgetValue={draftBudgetValue}
+                region={draftState.region}
+                budgetValue={draftState.budget}
+                priorityValue={draftState.priority}
+                secondaryValue={draftState.secondary}
+                secondaryLabel={secondaryConfig.label}
                 budgetLabel={budgetLabel}
-                budgetOptions={budgetOptionsByIntent[intent]}
+                budgetOptions={budgetOptionsByPathway[pathway]}
+                priorityOptions={priorityOptionsByPathway[pathway]}
+                secondaryOptions={secondaryConfig.options}
                 hasPendingChanges={hasPendingChanges}
                 resultCount={results.length}
-                onRegionChange={setDraftRegion}
-                onBudgetChange={setDraftBudgetValue}
+                onRegionChange={(region) => updateDraftState({ region })}
+                onBudgetChange={(budget) => updateDraftState({ budget })}
+                onPriorityChange={(priority) => updateDraftState({ priority })}
+                onSecondaryChange={(secondary) => updateDraftState({ secondary })}
                 onApply={handleApply}
                 onReset={handleReset}
               />
@@ -186,7 +287,6 @@ export function PropertyExplorer({
         </PageWrapper>
       </section>
 
-      {/* Results */}
       <PageWrapper animate={false} className={outerSpacingClassName}>
         <div className="space-y-5">
           {compareError ? (
@@ -196,13 +296,14 @@ export function PropertyExplorer({
           ) : null}
 
           <ResultsList
-            intent={intent}
+            pathway={pathway}
             results={results}
             pageResults={pageResults}
             currentPage={safeCurrentPage}
             totalPages={totalPages}
-            appliedRegion={appliedRegion}
+            appliedRegion={appliedState.region}
             appliedBudgetLabel={appliedBudgetLabel}
+            appliedPriorityLabel={appliedPriorityLabel}
             onPageChange={handlePageChange}
             onReset={handleReset}
             compareIds={compareIds}
@@ -211,7 +312,7 @@ export function PropertyExplorer({
         </div>
       </PageWrapper>
 
-      {intent === "rent" && comparedSuburbs.length >= 2 ? (
+      {pathway === "rent" && comparedSuburbs.length >= 2 ? (
         <ComparePanel
           suburbs={comparedSuburbs}
           open={compareOpen}

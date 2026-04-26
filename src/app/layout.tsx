@@ -18,25 +18,25 @@ const display = Fraunces({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://suburbiq.example"),
+  metadataBase: new URL("https://nook.example"),
   title: {
-    default: "SuburbIQ | Brisbane property discovery platform",
-    template: "%s | SuburbIQ",
+    default: "Nook | Find your corner of Brisbane",
+    template: "%s | Nook",
   },
   description:
-    "SuburbIQ is a premium Brisbane property discovery platform for renting, buying, and investing with transparent suburb rankings.",
+    "Nook helps renters, buyers, and investors compare Brisbane suburbs around budget, lifestyle, and goals.",
   keywords: [
-    "Brisbane property platform",
-    "Brisbane suburb rankings",
+    "Nook",
+    "Brisbane suburb recommendations",
     "rent in Brisbane",
     "buy in Brisbane",
     "invest in Brisbane",
   ],
   openGraph: {
-    title: "SuburbIQ",
+    title: "Nook",
     description:
-      "Find Brisbane suburbs for renting, buying, or investing with calm design, clear logic, and readable recommendations.",
-    siteName: "SuburbIQ",
+      "Find your corner of Brisbane with suburb recommendations for renting, buying, and investing.",
+    siteName: "Nook",
     type: "website",
   },
 };
@@ -47,8 +47,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full" data-scroll-behavior="smooth">
-      <body className={`${sans.variable} ${display.variable} min-h-full bg-neutral-50 text-neutral-700`}>
+    <html lang="en" className={`${sans.variable} ${display.variable} h-full`} data-scroll-behavior="smooth">
+      <body className="min-h-full bg-neutral-50 text-neutral-700">
         <div className="flex min-h-full flex-col">
           <Navbar />
           <main className="flex-1" style={{ paddingTop: "var(--nav-height)" }}>

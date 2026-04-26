@@ -2,18 +2,25 @@ import type { Metadata } from "next";
 import { PropertyExplorer } from "@/components/ui/PropertyExplorer";
 
 export const metadata: Metadata = {
-  title: "Buy",
+  title: "Buy in Brisbane",
   description:
-    "Explore Brisbane suburbs for buying with transparent rankings and owner-occupier signals.",
+    "Find Brisbane suburbs for buying based on budget, schools, transport, long-term liveability, and value signals.",
 };
 
-export default function BuyPage() {
+export default async function BuyPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+
   return (
     <PropertyExplorer
       intent="buy"
-      title="Brisbane buying rankings"
-      description="All suburbs ranked for buyers. Filter by region and purchase budget to focus the shortlist."
+      title="Shortlist Brisbane suburbs before you scroll listings."
+      description="Compare buyer-friendly suburbs by purchase budget, property type, region, schools, transport, lifestyle, and long-term liveability."
       budgetLabel="Purchase budget"
+      initialParams={params}
     />
   );
 }

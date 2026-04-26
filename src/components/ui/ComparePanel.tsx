@@ -3,11 +3,11 @@
 import { motion } from "framer-motion";
 import { BarChart3, ChevronsUpDown, X } from "lucide-react";
 import { formatRent } from "@/lib/format";
-import { getCompositeScore, getScoreRows } from "@/lib/mockData";
-import type { Suburb } from "@/lib/types";
+import { calculateRentScore, getScoreRows } from "@/lib/recommendations";
+import type { BrisbaneSuburb } from "@/lib/types";
 
 interface ComparePanelProps {
-  suburbs: Suburb[];
+  suburbs: BrisbaneSuburb[];
   open: boolean;
   onToggleOpen: () => void;
   onClose: () => void;
@@ -18,7 +18,7 @@ export function ComparePanel({ suburbs, open, onToggleOpen, onClose }: ComparePa
     <div className="fixed inset-x-0 bottom-0 z-40 px-3 pb-3 sm:px-5 sm:pb-5">
       <motion.div
         layout
-        className="mx-auto max-h-[70vh] w-full max-w-5xl overflow-hidden rounded-[1.6rem] border border-[rgba(17,32,51,0.08)] bg-[rgba(255,252,248,0.96)] shadow-[0_-20px_60px_rgba(17,32,51,0.12)] backdrop-blur-xl"
+        className="mx-auto max-h-[72vh] w-full max-w-5xl overflow-hidden rounded-[1.6rem] border border-[rgba(17,32,51,0.08)] bg-[rgba(255,252,248,0.96)] shadow-[0_-20px_60px_rgba(17,32,51,0.12)] backdrop-blur-xl"
         initial={false}
         transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
       >
@@ -33,7 +33,7 @@ export function ComparePanel({ suburbs, open, onToggleOpen, onClose }: ComparePa
                 {suburbs.map((suburb) => suburb.name).join(" / ")}
               </p>
               <p className="mt-1 text-sm text-neutral-600">
-                Quick side-by-side signals without covering the full results page.
+                Quick side-by-side suburb signals without leaving the results.
               </p>
             </button>
 
@@ -58,49 +58,48 @@ export function ComparePanel({ suburbs, open, onToggleOpen, onClose }: ComparePa
             </div>
           </div>
 
-          <div
-            className={`overflow-y-auto pr-1 ${suburbs.length === 2 ? "grid gap-3 lg:grid-cols-2" : "grid gap-3 lg:grid-cols-3"}`}
-          >
-            {suburbs.map((suburb) => {
-              const scoreRows = getScoreRows(suburb, "rent");
-              const topReason = scoreRows[0]?.reason ?? suburb.verdict;
+          {open ? (
+            <div
+              className={`overflow-y-auto pr-1 ${suburbs.length === 2 ? "grid gap-3 lg:grid-cols-2" : "grid gap-3 lg:grid-cols-3"}`}
+            >
+              {suburbs.map((suburb) => {
+                const scoreRows = getScoreRows(suburb, "rent");
 
-              return (
-                <div
-                  key={suburb.id}
-                  className="rounded-[1.25rem] border border-[rgba(17,32,51,0.08)] bg-white/82 p-4"
-                >
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between gap-3">
-                        <h3 className="text-base font-semibold tracking-tight text-brand-navy sm:text-lg">
-                          {suburb.name}
-                        </h3>
-                        <span className="inline-flex items-center rounded-full border border-brand-blue/12 bg-brand-blue/[0.07] px-2.5 py-1 text-xs font-semibold text-brand-blue">
-                          {getCompositeScore(suburb, "rent").toFixed(1)} / 10
-                        </span>
+                return (
+                  <div
+                    key={suburb.id}
+                    className="rounded-[1.25rem] border border-[rgba(17,32,51,0.08)] bg-white/82 p-4"
+                  >
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <h3 className="text-base font-semibold tracking-tight text-brand-navy sm:text-lg">
+                            {suburb.name}
+                          </h3>
+                          <span className="inline-flex items-center rounded-full border border-brand-blue/12 bg-brand-blue/[0.07] px-2.5 py-1 text-xs font-semibold text-brand-blue">
+                            {calculateRentScore(suburb)} / 100
+                          </span>
+                        </div>
+                        <p className="text-sm text-neutral-600">{suburb.region}</p>
                       </div>
-                      <p className="text-sm text-neutral-600">{suburb.region}</p>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <div className="rounded-[1rem] border border-[rgba(17,32,51,0.08)] bg-[rgba(29,95,168,0.04)] px-3 py-2.5">
-                        <p className="field-label">Weekly rent</p>
-                        <p className="mt-1 text-sm font-semibold tracking-tight text-brand-navy">
-                          {formatRent(suburb.weeklyRent)}
-                        </p>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="rounded-[1rem] border border-[rgba(17,32,51,0.08)] bg-[rgba(29,95,168,0.04)] px-3 py-2.5">
+                          <p className="field-label">Weekly rent</p>
+                          <p className="mt-1 text-sm font-semibold tracking-tight text-brand-navy">
+                            {formatRent(suburb.medianRentEstimate)}
+                          </p>
+                        </div>
+                        <div className="rounded-[1rem] border border-[rgba(17,32,51,0.08)] bg-[rgba(187,154,103,0.07)] px-3 py-2.5">
+                          <p className="field-label">Transport</p>
+                          <p className="mt-1 text-sm font-semibold tracking-tight text-brand-navy">
+                            {suburb.transportScore} / 100
+                          </p>
+                        </div>
                       </div>
-                      <div className="rounded-[1rem] border border-[rgba(17,32,51,0.08)] bg-[rgba(187,154,103,0.07)] px-3 py-2.5">
-                        <p className="field-label">Renter fit</p>
-                        <p className="mt-1 text-sm font-semibold tracking-tight text-brand-navy">
-                          {((suburb.rentScores.amenity + suburb.rentScores.rentToValue) / 2).toFixed(1)} / 10
-                        </p>
-                      </div>
-                    </div>
 
-                    <p className="text-sm leading-6 text-neutral-600">{topReason}</p>
+                      <p className="text-sm leading-6 text-neutral-600">{suburb.recommendationReasons.rent}</p>
 
-                    {open ? (
                       <div className="grid gap-2.5 border-t border-[rgba(17,32,51,0.08)] pt-3">
                         {scoreRows.map((score) => (
                           <div
@@ -112,19 +111,19 @@ export function ComparePanel({ suburbs, open, onToggleOpen, onClose }: ComparePa
                                 {score.label}
                               </span>
                               <span className="font-mono text-xs font-semibold text-brand-navy">
-                                {score.score.toFixed(1)} / 10
+                                {score.score} / 100
                               </span>
                             </div>
                             <p className="mt-2 text-[0.85rem] leading-5 text-neutral-600">{score.reason}</p>
                           </div>
                         ))}
                       </div>
-                    ) : null}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       </motion.div>
     </div>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { ArrowRight, MapPin, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -77,16 +77,14 @@ export function Navbar() {
             <Link
               href="/"
               className="group flex min-w-0 items-center gap-2.5 rounded-full px-1 py-1.5 focus-visible:outline-none"
-              aria-label="SuburbIQ home"
+              aria-label="Nook home"
             >
               <span className="relative grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full border border-white/14 bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
                 <span className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),transparent_58%)]" />
-                <span className="relative font-[var(--font-display)] text-xs font-semibold uppercase tracking-[0.22em] text-white">
-                  SI
-                </span>
+                <MapPin className="relative h-4 w-4 text-white" />
               </span>
 
-              <span className="text-[0.95rem] font-semibold tracking-tight text-white">SuburbIQ</span>
+              <span className="text-[0.95rem] font-semibold tracking-tight text-white">Nook</span>
             </Link>
 
             <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex">
@@ -111,7 +109,13 @@ export function Navbar() {
               })}
             </nav>
 
-            <div className="hidden lg:block lg:w-[8rem]" aria-hidden="true" />
+            <Link
+              href="/#quiz"
+              className="hidden items-center gap-2 rounded-full border border-white/14 bg-white px-4 py-2 text-sm font-semibold tracking-tight text-brand-navy transition hover:bg-[#f4efe6] lg:inline-flex"
+            >
+              Start quiz
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
 
             <button
               type="button"
@@ -149,10 +153,10 @@ export function Navbar() {
             >
               <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
                 <Link href="/" className="flex min-w-0 items-center gap-2.5" onClick={() => setIsOpen(false)}>
-                  <span className="grid h-9 w-9 place-items-center rounded-full border border-white/14 bg-white/10 font-[var(--font-display)] text-xs font-semibold uppercase tracking-[0.22em]">
-                    SI
+                  <span className="grid h-9 w-9 place-items-center rounded-full border border-white/14 bg-white/10">
+                    <MapPin className="h-4 w-4 text-white" />
                   </span>
-                  <span className="text-[0.95rem] font-semibold tracking-tight">SuburbIQ</span>
+                  <span className="text-[0.95rem] font-semibold tracking-tight">Nook</span>
                 </Link>
 
                 <button
@@ -166,6 +170,15 @@ export function Navbar() {
               </div>
 
               <div className="mt-4 space-y-1.5">
+                <Link
+                  href="/#quiz"
+                  onClick={() => setIsOpen(false)}
+                  className="mb-3 flex items-center justify-between rounded-xl border border-white/16 bg-white px-4 py-3 text-sm font-semibold tracking-tight text-brand-navy"
+                >
+                  Start quiz
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+
                 {navigationLinks.map((link) => {
                   const active = isActivePath(pathname, link.href);
 

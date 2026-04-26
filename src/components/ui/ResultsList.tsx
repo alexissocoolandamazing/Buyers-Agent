@@ -3,63 +3,62 @@
 import { CTAButton } from "@/components/ui/CTAButton";
 import { Pagination } from "@/components/ui/Pagination";
 import { ResultCard } from "@/components/ui/ResultCard";
-import type { Intent, Region, Suburb } from "@/lib/types";
+import type { Pathway, RankedSuburb, RegionPreference } from "@/lib/types";
 
 interface ResultsListProps {
-  intent: Intent;
-  results: Suburb[];
-  pageResults: Suburb[];
+  pathway: Pathway;
+  results: RankedSuburb[];
+  pageResults: RankedSuburb[];
   currentPage: number;
   totalPages: number;
-  appliedRegion: Region | "All Regions";
+  appliedRegion: RegionPreference;
   appliedBudgetLabel: string;
+  appliedPriorityLabel: string;
   onPageChange: (page: number) => void;
   onReset: () => void;
   compareIds?: string[];
   onCompareToggle?: (id: string) => void;
 }
 
-const emptyByIntent: Record<
-  Intent,
-  { title: string; description: string }
-> = {
+const emptyByPathway: Record<Pathway, { title: string; description: string }> = {
   rent: {
     title: "No rental matches.",
-    description: "Reset filters to see all Brisbane rental suburbs.",
+    description: "Reset filters to see the full Brisbane rental shortlist again.",
   },
   buy: {
-    title: "No buying matches.",
-    description: "Reset filters to see all Brisbane buying suburbs.",
+    title: "No buyer matches.",
+    description: "Reset filters to return to the default buyer recommendations.",
   },
   invest: {
-    title: "No investment matches.",
-    description: "Reset filters to see all Brisbane investment suburbs.",
+    title: "No investor matches.",
+    description: "Reset filters to return to the default investor recommendations.",
   },
 };
 
 export function ResultsList({
-  intent,
+  pathway,
   results,
   pageResults,
   currentPage,
   totalPages,
   appliedRegion,
   appliedBudgetLabel,
+  appliedPriorityLabel,
   onPageChange,
   onReset,
   compareIds = [],
   onCompareToggle,
 }: ResultsListProps) {
-  const empty = emptyByIntent[intent];
-  const startIndex = results.length === 0 ? 0 : (currentPage - 1) * 5 + 1;
+  const empty = emptyByPathway[pathway];
+  const startIndex = results.length === 0 ? 0 : (currentPage - 1) * 6 + 1;
   const endIndex = results.length === 0 ? 0 : startIndex + pageResults.length - 1;
 
   return (
     <section id="property-results" className="space-y-5">
-      <div className="flex flex-col gap-3 border-b border-[rgba(17,32,51,0.08)] pb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 border-b border-[rgba(17,32,51,0.08)] pb-4 lg:flex-row lg:items-center lg:justify-between">
         <p className="text-[0.96rem] leading-7 text-neutral-600">
           {results.length
-            ? `Showing ${startIndex}–${endIndex} of ${results.length} suburbs`
+            ? `Showing ${startIndex}-${endIndex} of ${results.length} suburb recommendations`
             : "No suburbs match the current filters."}
         </p>
 
@@ -72,20 +71,24 @@ export function ResultsList({
             <strong>Budget</strong>
             {appliedBudgetLabel}
           </span>
+          <span className="selection-chip">
+            <strong>Priority</strong>
+            {appliedPriorityLabel}
+          </span>
         </div>
       </div>
 
       {results.length ? (
         <>
           <div className="grid gap-4">
-            {pageResults.map((suburb, index) => (
+            {pageResults.map((result, index) => (
               <ResultCard
-                key={suburb.id}
-                suburb={suburb}
-                intent={intent}
+                key={result.suburb.id}
+                result={result}
+                pathway={pathway}
                 rank={startIndex + index}
-                compareSelected={compareIds.includes(suburb.id)}
-                onCompareToggle={intent === "rent" ? onCompareToggle : undefined}
+                compareSelected={compareIds.includes(result.suburb.id)}
+                onCompareToggle={pathway === "rent" ? onCompareToggle : undefined}
               />
             ))}
           </div>

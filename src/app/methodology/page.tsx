@@ -3,20 +3,21 @@ import Link from "next/link";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { DisclaimerCard } from "@/components/ui/DisclaimerCard";
 import { MethodologyChartClient } from "@/components/ui/MethodologyChartClient";
-import { methodologyWeightData } from "@/lib/mockData";
+import { MVP_DATA_DISCLAIMER, plannedDataSources } from "@/data/brisbaneSuburbs";
+import { methodologyWeightData } from "@/lib/recommendations";
 
 const anchorLinks = [
-  { id: "data-sources", label: "Where the data comes from" },
-  { id: "score-calculation", label: "How scores are calculated" },
-  { id: "score-meanings", label: "What each score means" },
-  { id: "limitations", label: "Limits of the tool" },
-  { id: "disclaimer", label: "Full disclaimer" },
+  { id: "data-sources", label: "Data sources" },
+  { id: "score-calculation", label: "Scoring logic" },
+  { id: "score-meanings", label: "Score meanings" },
+  { id: "limitations", label: "Limits" },
+  { id: "disclaimer", label: "Disclaimer" },
 ];
 
 export const metadata: Metadata = {
   title: "Methodology",
   description:
-    "Understand where SuburbIQ data comes from, how scores are calculated, and where the current MVP has clear limits.",
+    "Understand how Nook uses seeded Brisbane suburb profiles, pathway scoring, and public-data-ready fields.",
 };
 
 function MethodologySection({
@@ -65,37 +66,41 @@ export default function MethodologyPage() {
               <div className="space-y-6">
                 <p className="eyebrow">Methodology</p>
                 <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] font-semibold leading-[0.96] tracking-[-0.05em] text-brand-navy">
-                  Transparent rankings, written to be read.
+                  Clear suburb recommendations, built to be inspected.
                 </h1>
                 <p className="max-w-3xl text-[1.02rem] leading-8 text-neutral-700">
-                  SuburbIQ is designed to feel more like an advisory brief than a listing portal. The scoring logic is
-                  intentionally simple enough to explain, inspect, and challenge rather than hide behind an opaque
-                  model.
+                  Nook is designed to help people choose which Brisbane suburbs are worth considering before they spend
+                  hours scrolling individual listings. The current MVP uses seeded suburb profiles with fields that are
+                  ready to be replaced by live or official datasets later.
                 </p>
               </div>
             </div>
 
             <MethodologySection id="data-sources" title="Where the data comes from">
+              <p>{MVP_DATA_DISCLAIMER}</p>
               <p>
-                The current MVP uses typed mock suburb data so every screen can be explored end to end without waiting
-                on external feeds. Each record is structured the way a production recommendation engine would expect:
-                suburb identity, region, rent signals, buy signals, investment signals, local context, and a written
-                verdict.
+                Each suburb record includes identity, region, council area, postcode, coordinates, rent and buy
+                estimates, estimated yield, scores from 1 to 100, nearby features, data notes, and pathway-specific
+                recommendation reasons.
               </p>
-              <p>
-                In a production version, those fields would be populated from suburb-level price series, rental market
-                data, amenity references, transport accessibility, and school or shopping proximity datasets. The
-                current architecture keeps that swap straightforward because the UI consumes typed objects rather than
-                raw API responses.
-              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {plannedDataSources.map((source) => (
+                  <div
+                    key={source}
+                    className="rounded-[1rem] border border-[rgba(17,32,51,0.08)] bg-white/82 px-3.5 py-3 text-sm font-medium text-neutral-700"
+                  >
+                    {source}
+                  </div>
+                ))}
+              </div>
             </MethodologySection>
 
             <MethodologySection id="score-calculation" title="How scores are calculated">
               <p>
-                Every suburb receives three scores out of 10 for each intent. Those scores are then blended into a
-                single composite ranking using simple intent-specific weights. Rent places more weight on price
-                discipline and day-to-day practicality, buy balances value with lifestyle and family fit, and invest
-                leans more heavily toward demand resilience.
+                Nook uses pathway-specific scoring. Rent prioritises rent affordability, transport, lifestyle, safety,
+                and bedroom fit. Buy prioritises affordability, schools, lifestyle, transport, long-term liveability,
+                and property type fit. Invest prioritises estimated yield, renter demand, affordability, growth proxy,
+                and risk balance.
               </p>
               <div className="rounded-[1.5rem] border border-[rgba(17,32,51,0.08)] bg-white/82 p-5">
                 <div className="flex flex-wrap gap-4 text-sm text-neutral-700">
@@ -117,42 +122,40 @@ export default function MethodologyPage() {
                 </div>
               </div>
               <p>
-                The point of this weighting is not to create a magic answer. It is to make the trade-offs visible. A
-                suburb can still be a strong lifestyle buy while looking weaker on entry value, and the interface
-                should make that nuance obvious rather than flatten it away.
+                The point is not to create a magic answer. It is to make the trade-offs visible and reusable while the
+                product moves toward richer datasets.
               </p>
             </MethodologySection>
 
             <MethodologySection id="score-meanings" title="What each score means">
               <p>
-                Rent scores cover affordability, rent-to-value fit, and amenity. Buy scores cover purchase value,
-                lifestyle convenience, and family liveability. Invest scores cover rental yield, entry price, and
-                demand pressure.
+                Scores run from 1 to 100. Higher is better for that signal. Affordability reflects relative suburb-level
+                cost pressure. Transport reflects access to trains, busways, ferries, and major routes. School, safety,
+                lifestyle, growth proxy, renter, buyer, and investor scores are seeded MVP signals for testing the
+                recommendation experience.
               </p>
               <p>
-                Each one is accompanied by a plain-English reason so users can understand what drove the number. That
-                explanation is just as important as the score itself because it gives the ranking an advisory feel
-                instead of a black-box analytics feel.
+                Each result also includes a one-sentence explanation so the ranking feels more like a suburb brief than
+                a black-box number.
               </p>
             </MethodologySection>
 
             <MethodologySection id="limitations" title="Limitations of this tool">
               <p>
-                This MVP is suburb-level only. It does not account for street-by-street variation, asset condition,
-                dwelling type, flood overlays, strata quality, financing structures, or any personal risk settings that
-                would shape a real property decision.
+                Nook is suburb-level only. It does not account for street-by-street variation, flood overlays, building
+                condition, strata quality, school catchment boundaries, financing structure, tax position, or personal
+                risk settings.
               </p>
               <p>
-                Scores are also intentionally simplified. They are useful for building a shortlist, but not for
-                replacing inspections, broker conversations, legal review, or suburb-specific due diligence. The
-                platform helps narrow the field; it should not be the final decision-maker.
+                The current data is seeded for MVP testing and should be treated as a product prototype, not live market
+                intelligence or official advice.
               </p>
             </MethodologySection>
 
             <MethodologySection id="disclaimer" title="Full disclaimer">
               <DisclaimerCard
                 heading="Informational use only."
-                body="SuburbIQ does not provide financial, legal, tax, or investment advice. Rankings are an informational starting point built from mock suburb data and editorial scoring logic, and they should not be relied on as a substitute for independent professional advice or your own property due diligence."
+                body="Nook does not provide financial, legal, tax, investment, or property advice. Rankings are a suburb-level starting point built from seeded MVP profiles and transparent scoring logic. Verify assumptions independently before making any property decision."
               />
             </MethodologySection>
           </div>
